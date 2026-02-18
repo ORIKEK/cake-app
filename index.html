@@ -147,6 +147,7 @@ button {
 
 </div>
 
+
 <script>
 function order(cake) {
   var name = prompt("Customer name:");
@@ -169,21 +170,7 @@ function order(cake) {
 
   localStorage.setItem("orders", JSON.stringify(orders));
 
-var message =
-  "New Cake Order 🍰%0A%0A" +
-  "Cake: " + cake + "%0A" +
-  "Name: " + name + "%0A" +
-  "Phone: " + phone + "%0A" +
-  "Delivery Date: " + date;
-
-var whatsappNumber = "918779968259
-"; // replace with shop number
-
-window.open(
-  "https://wa.me/" + whatsappNumber + "?text=" + message,
-  "_blank"
-);
-
+  alert("Order saved successfully ✅");
 }
 
 function toggleDark() {
@@ -217,6 +204,17 @@ function showAdmin() {
 
   alert(text);
 }
+
+function callShop() {
+  window.location.href = "tel:9876543210";  // change later if needed
+}
+
+function chatWhatsApp() {
+  window.open("https://wa.me/919876543210", "_blank"); // change later
+}
+</script>
+
+
 </script>
 
 
