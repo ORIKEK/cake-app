@@ -1,48 +1,216 @@
+<!DOCTYPE html>
 <html>
 <head>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="manifest" href="manifest.json">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f5f5f5;
+  color: black;
+}
+
+body.dark {
+  background: #121212;
+  color: white;
+}
+
+body.dark .card {
+  background: #1e1e1e;
+}
+
+body.dark .header {
+  background: black;
+}
+
+}
+
+.header {
+  background: #e23744;
+  color: white;
+  padding: 15px;
+  text-align: center;
+  font-size: 22px;
+  font-weight: bold;
+}
+
+.container {
+  padding: 15px;
+}
+
+.card {
+  background: white;
+  border-radius: 12px;
+  padding: 15px;
+  margin-bottom: 15px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.card h3 {
+  margin: 0;
+}
+
+.price {
+  color: green;
+  font-weight: bold;
+  margin: 8px 0;
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  background: #e23744;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+}
+</style>
 </head>
 
 <body>
 
-<h1>🍰 Home Cake Shop</h1>
+<div class="header">
+  🍰 Home Cake Shop
+  <br><br>
 
-<p>Chocolate Cake - ₹500</p>
-<button onclick="orderCake('Chocolate Cake')">Order Chocolate Cake</button>
+  <button onclick="toggleDark()" style="padding:6px 12px; border-radius:20px; border:none;">
+    🌙 Dark Mode
+  </button>
 
-<br><br>
+  <button onclick="showAdmin()" style="padding:6px 12px; border-radius:20px; border:none; margin-left:5px;">
+    🧾 Admin
+  </button>
+</div>
 
-<p>Vanilla Cake - ₹450</p>
-<button onclick="orderCake('Vanilla Cake')">Order Vanilla Cake</button>
+
+
+
+<div class="container">
+<h2>🎂 Birthday Cakes</h2>
+
+<div class="card">
+  <h3>Chocolate Birthday Cake</h3>
+  <p class="price">₹500</p>
+  <button onclick="order('Chocolate Birthday Cake')">Order</button>
+</div>
+
+<div class="card">
+  <h3>Vanilla Birthday Cake</h3>
+  <p class="price">₹450</p>
+  <button onclick="order('Vanilla Birthday Cake')">Order</button>
+</div>
+
+<h2>💍 Wedding Cakes</h2>
+
+<div class="card">
+  <h3>3 Tier Wedding Cake</h3>
+  <p class="price">₹3000</p>
+  <button onclick="order('3 Tier Wedding Cake')">Order</button>
+</div>
+
+<h2>✨ Custom Cakes</h2>
+
+<div class="card">
+  <h3>Photo Custom Cake</h3>
+  <p class="price">₹800</p>
+  <button onclick="order('Photo Custom Cake')">Order</button>
+</div>
+
+
+</button>
+</div>
+
+<div class="card">
+  <h3>Vanilla Cake</h3>
+  <p class="price">₹450</p>
+  <button onclick="order('Vanilla Cake')">Order</button>
+</div>
+
+<div class="card">
+  <h3>Butterscotch Cake</h3>
+  <p class="price">₹550</p>
+  <button onclick="order('Butterscotch Cake')">Order</button>
+</div>
+
+</div>
 
 <script>
-function orderCake(cakeName) {
-  var name = prompt("Enter your name");
-  var phone = prompt("Enter your phone number");
-  var date = prompt("Enter delivery date (DD/MM/YYYY)");
+function order(cake) {
+  var name = prompt("Customer name:");
+  if (!name) return;
 
-  var message =
-    "New Cake Order%0A" +
-    "Cake: " + cakeName + "%0A" +
-    "Name: " + name + "%0A" +
-    "Phone: " + phone + "%0A" +
-    "Delivery Date: " + date;
+  var phone = prompt("Phone number:");
+  if (!phone) return;
 
-  var whatsappNumber = "918779968259"; // change this
+  var date = prompt("Delivery date (DD/MM):");
+  if (!date) return;
 
-  window.open(
-    "https://wa.me/" + whatsappNumber + "?text=" + message,
-    "_blank"
-  );
+  var orders = JSON.parse(localStorage.getItem("orders")) || [];
+
+  orders.push({
+    cake: cake,
+    name: name,
+    phone: phone,
+    date: date
+  });
+
+  localStorage.setItem("orders", JSON.stringify(orders));
+
+var message =
+  "New Cake Order 🍰%0A%0A" +
+  "Cake: " + cake + "%0A" +
+  "Name: " + name + "%0A" +
+  "Phone: " + phone + "%0A" +
+  "Delivery Date: " + date;
+
+var whatsappNumber = "918779968259"; // replace with shop number
+
+window.open(
+  "https://wa.me/" + whatsappNumber + "?text=" + message,
+  "_blank"
+);
+
 }
-<script>
-if ('serviceWorker' in navigator) {
-  navigator.serviceWorker.register('service-worker.js');
+
+function toggleDark() {
+  document.body.classList.toggle("dark");
+}
+
+function showAdmin() {
+  var password = prompt("Enter admin password:");
+
+  if (password !== "cake123") {
+    alert("Wrong password ❌");
+    return;
+  }
+
+  var orders = JSON.parse(localStorage.getItem("orders")) || [];
+
+  if (orders.length === 0) {
+    alert("No orders yet");
+    return;
+  }
+
+  var text = "📋 ALL ORDERS\n\n";
+
+  orders.forEach(function(o, i) {
+    text +=
+      (i + 1) + ". " + o.cake + "\n" +
+      "Name: " + o.name + "\n" +
+      "Phone: " + o.phone + "\n" +
+      "Date: " + o.date + "\n\n";
+  });
+
+  alert(text);
 }
 </script>
 
 
+
+
 </body>
 </html>
-
