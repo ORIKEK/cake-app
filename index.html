@@ -1,0 +1,47 @@
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="manifest" href="manifest.json">
+</head>
+
+<body>
+
+<h1>🍰 Home Cake Shop</h1>
+
+<p>Chocolate Cake - ₹500</p>
+<button onclick="orderCake('Chocolate Cake')">Order Chocolate Cake</button>
+
+<br><br>
+
+<p>Vanilla Cake - ₹450</p>
+<button onclick="orderCake('Vanilla Cake')">Order Vanilla Cake</button>
+
+<script>
+function orderCake(cakeName) {
+  var name = prompt("Enter your name");
+  var phone = prompt("Enter your phone number");
+  var date = prompt("Enter delivery date (DD/MM/YYYY)");
+
+  var message =
+    "New Cake Order%0A" +
+    "Cake: " + cakeName + "%0A" +
+    "Name: " + name + "%0A" +
+    "Phone: " + phone + "%0A" +
+    "Delivery Date: " + date;
+
+  var whatsappNumber = "918779968259"; // change this
+
+  window.open(
+    "https://wa.me/" + whatsappNumber + "?text=" + message,
+    "_blank"
+  );
+}
+<script>
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('service-worker.js');
+}
+</script>
+
+
+</body>
+</html>
