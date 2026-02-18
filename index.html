@@ -1,224 +1,203 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-
-<style>
-
-
-body {
-
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: #fff7f2; /* soft bakery cream */
-  color: #333;
-
-}
-
-body.dark {
-  background: #121212;
-  color: white;
-}
-
-body.dark .card {
-  background: #1e1e1e;
-}
-
-body.dark .header {
-  background: black;
-}
-
-}
-
-.header {
-  background: #e23744;
-  color: white;
-  padding: 15px;
-  text-align: center;
-  font-size: 22px;
-  font-weight: bold;
-}
-
-.container {
-  padding: 15px;
-}
-
-.card {
-  background: white;
-  border-radius: 12px;
-  padding: 15px;
-  margin-bottom: 15px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
-
-.card h3 {
-  margin: 0;
-}
-
-.price {
-  color: green;
-  font-weight: bold;
-  margin: 8px 0;
-}
-
-button {
-  width: 100%;
-  padding: 12px;
-  background: #e23744;
-  color: white;
-  border: none;
-  border-radius: 8px;
-  font-size: 16px;
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home Cake Shop</title>
+  <link rel="manifest" href="manifest.json">
   
-  h2 {
-  margin-top: 25px;
-  color: #e23744;
-}
+  <style>
+    /* Base Styles */
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Arial, sans-serif;
+      background: #fff7f2;
+      color: #333;
+      transition: background 0.3s ease; /* Smooth dark mode fade */
+      -webkit-tap-highlight-color: transparent; /* Makes it feel like an app */
+      user-select: none; /* Prevents accidental text highlighting */
+    }
 
-  
-}
-</style>
+    /* Dark Mode */
+    body.dark {
+      background: #121212;
+      color: #e0e0e0;
+    }
+    body.dark .card {
+      background: #1e1e1e;
+      color: white;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+    }
+    body.dark .header {
+      background: #1a1a1a;
+      border-bottom: 1px solid #333;
+    }
+
+    /* Header & Navigation */
+    .header {
+      background: #e23744;
+      color: white;
+      padding: 20px 15px;
+      text-align: center;
+      position: sticky; /* Stays at the top like an app */
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+
+    .nav-buttons {
+      margin-top: 10px;
+    }
+
+    .nav-btn {
+      padding: 8px 15px;
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.3);
+      background: rgba(255,255,255,0.2);
+      color: white;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    /* Content Area */
+    .container {
+      padding: 15px;
+      max-width: 600px; /* Centers app on large screens */
+      margin: 0 auto;
+    }
+
+    h2 {
+      margin-top: 25px;
+      color: #e23744;
+      font-size: 1.2rem;
+      border-left: 4px solid #e23744;
+      padding-left: 10px;
+    }
+
+    /* Cake Cards */
+    .card {
+      background: white;
+      border-radius: 15px;
+      padding: 18px;
+      margin-bottom: 15px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+      transition: transform 0.1s;
+    }
+    
+    .card:active {
+      transform: scale(0.98); /* Slight shrink when tapped */
+    }
+
+    .card h3 {
+      margin: 0 0 5px 0;
+    }
+
+    .price {
+      color: #2e7d32;
+      font-weight: bold;
+      font-size: 18px;
+      margin: 8px 0;
+    }
+
+    /* Order Button */
+    .order-btn {
+      width: 100%;
+      padding: 14px;
+      background: #e23744;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+  </style>
 </head>
-
 <body>
 
 <div class="header">
-  🍰 Home Cake Shop
-  <br><br>
-
-  <button onclick="toggleDark()" style="padding:6px 12px; border-radius:20px; border:none;">
-    🌙 Dark Mode
-  </button>
-
-  <button onclick="showAdmin()" style="padding:6px 12px; border-radius:20px; border:none; margin-left:5px;">
-    🧾 Admin
-  </button>
+  <div style="font-size: 24px;">🍰 Home Cake Shop</div>
+  <div class="nav-buttons">
+    <button class="nav-btn" onclick="toggleDark()">🌙 Mode</button>
+    <button class="nav-btn" onclick="showAdmin()" style="margin-left:8px;">🧾 Admin</button>
+  </div>
 </div>
-
-
-
 
 <div class="container">
-<h2>🎂 Birthday Cakes</h2>
+  <h2>🎂 Birthday Cakes</h2>
+  <div class="card">
+    <h3>Chocolate Birthday Cake</h3>
+    <p class="price">₹500</p>
+    <button class="order-btn" onclick="order('Chocolate Birthday Cake')">Order Now</button>
+  </div>
 
-<div class="card">
-  <h3>Chocolate Birthday Cake</h3>
-  <p class="price">₹500</p>
-  <button onclick="order('Chocolate Birthday Cake')">Order</button>
+  <div class="card">
+    <h3>Vanilla Birthday Cake</h3>
+    <p class="price">₹450</p>
+    <button class="order-btn" onclick="order('Vanilla Birthday Cake')">Order Now</button>
+  </div>
+
+  <h2>💍 Wedding Cakes</h2>
+  <div class="card">
+    <h3>3 Tier Wedding Cake</h3>
+    <p class="price">₹3000</p>
+    <button class="order-btn" onclick="order('3 Tier Wedding Cake')">Order Now</button>
+  </div>
+
+  <h2>✨ Custom Cakes</h2>
+  <div class="card">
+    <h3>Photo Custom Cake</h3>
+    <p class="price">₹800</p>
+    <button class="order-btn" onclick="order('Photo Custom Cake')">Order Now</button>
+  </div>
 </div>
-
-<div class="card">
-  <h3>Vanilla Birthday Cake</h3>
-  <p class="price">₹450</p>
-  <button onclick="order('Vanilla Birthday Cake')">Order</button>
-</div>
-
-<h2>💍 Wedding Cakes</h2>
-
-<div class="card">
-  <h3>3 Tier Wedding Cake</h3>
-  <p class="price">₹3000</p>
-  <button onclick="order('3 Tier Wedding Cake')">Order</button>
-</div>
-
-<h2>✨ Custom Cakes</h2>
-
-<div class="card">
-  <h3>Photo Custom Cake</h3>
-  <p class="price">₹800</p>
-  <button onclick="order('Photo Custom Cake')">Order</button>
-</div>
-
-
-</button>
-</div>
-
-<div class="card">
-  <h3>Vanilla Cake</h3>
-  <p class="price">₹450</p>
-  <button onclick="order('Vanilla Cake')">Order</button>
-</div>
-
-<div class="card">
-  <h3>Butterscotch Cake</h3>
-  <p class="price">₹550</p>
-  <button onclick="order('Butterscotch Cake')">Order</button>
-</div>
-
-</div>
-
 
 <script>
-function order(cake) {
-  var name = prompt("Customer name:");
-  if (!name) return;
-
-  var phone = prompt("Phone number:");
-  if (!phone) return;
-
-  var date = prompt("Delivery date (DD/MM):");
-  if (!date) return;
-
-  var orders = JSON.parse(localStorage.getItem("orders")) || [];
-
-  orders.push({
-    cake: cake,
-    name: name,
-    phone: phone,
-    date: date
-  });
-
-  localStorage.setItem("orders", JSON.stringify(orders));
-
-  alert("Order saved successfully ✅");
-}
-
-function toggleDark() {
-  document.body.classList.toggle("dark");
-}
-
-function showAdmin() {
-  var password = prompt("Enter admin password:");
-
-  if (password !== "cake123") {
-    alert("Wrong password ❌");
-    return;
+  // PWA Registration
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('service-worker.js');
   }
 
-  var orders = JSON.parse(localStorage.getItem("orders")) || [];
+  function order(cake) {
+    var name = prompt("Customer name:");
+    if (!name) return;
+    var phone = prompt("Phone number:");
+    if (!phone) return;
+    var date = prompt("Delivery date (DD/MM):");
+    if (!date) return;
 
-  if (orders.length === 0) {
-    alert("No orders yet");
-    return;
+    var orders = JSON.parse(localStorage.getItem("orders")) || [];
+    orders.push({ cake: cake, name: name, phone: phone, date: date });
+    localStorage.setItem("orders", JSON.stringify(orders));
+    alert("Order saved successfully ✅");
   }
 
-  var text = "📋 ALL ORDERS\n\n";
+  function toggleDark() {
+    document.body.classList.toggle("dark");
+  }
 
-  orders.forEach(function(o, i) {
-    text +=
-      (i + 1) + ". " + o.cake + "\n" +
-      "Name: " + o.name + "\n" +
-      "Phone: " + o.phone + "\n" +
-      "Date: " + o.date + "\n\n";
-  });
+  function showAdmin() {
+    var password = prompt("Enter admin password:");
+    if (password !== "cake123") {
+      alert("Wrong password ❌");
+      return;
+    }
 
-  alert(text);
-}
+    var orders = JSON.parse(localStorage.getItem("orders")) || [];
+    if (orders.length === 0) {
+      alert("No orders yet");
+      return;
+    }
 
-function callShop() {
-  window.location.href = "tel:9876543210";  // change later if needed
-}
-
-function chatWhatsApp() {
-  window.open("https://wa.me/919876543210", "_blank"); // change later
-}
+    var text = "📋 ALL ORDERS\n\n";
+    orders.forEach(function(o, i) {
+      text += (i + 1) + ". " + o.cake + "\n" +
+              "Name: " + o.name + " | Phone: " + o.phone + "\n" +
+              "Date: " + o.date + "\n\n";
+    });
+    alert(text);
+  }
 </script>
-
-
-</script>
-
-
-
 
 </body>
 </html>
