@@ -4,6 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Orikek - A Daily Celebration</title>
+    
+    <!-- PWA / INSTALLABLE APP TAGS -->
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Orikek">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#4d1d0c">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* CORE STYLES */
@@ -16,20 +24,22 @@
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--bg-dark);
+            background-image: url("data:image/svg+xml,%3Csvg width='160' height='160' viewBox='0 0 160 160' xmlns='http://www.w3.org/2000/svg'%3E%3Ctext x='10' y='30' fill='%234d1d0c' font-size='22' opacity='0.2'%3E🍰 %3C/text%3E%3Ctext x='100' y='35' fill='%234d1d0c' font-size='18' opacity='0.2'%3E🥐 %3C/text%3E%3Ctext x='50' y='65' fill='%234d1d0c' font-size='20' opacity='0.2'%3E🧁 %3C/text%3E%3Ctext x='130' y='75' fill='%234d1d0c' font-size='18' opacity='0.2'%3E🍩 %3C/text%3E%3Ctext x='15' y='95' fill='%234d1d0c' font-size='16' opacity='0.2'%3E🍪 %3C/text%3E%3Ctext x='85' y='110' fill='%234d1d0c' font-size='19' opacity='0.2'%3E🥨 %3C/text%3E%3Ctext x='40' y='140' fill='%234d1d0c' font-size='21' opacity='0.2'%3E🥞 %3C/text%3E%3Ctext x='120' y='145' fill='%234d1d0c' font-size='17' opacity='0.2'%3E🍯 %3C/text%3E%3C/svg%3E");
             color: white;
             margin: 0;
             padding: 0;
             display: flex;
             justify-content: center;
             height: 100vh;
-            overflow: hidden; /* Prevents double scrolling on laptop */
+            overflow: hidden; 
         }
 
-        /* PHONE SIMULATOR CONTAINER - Fixes Laptop "Glitch" Look */
+        /* PHONE SIMULATOR CONTAINER */
         #app-container {
             width: 100%;
-            max-width: 450px; /* Limits width so it looks like a phone */
+            max-width: 450px;
             background-color: var(--brand-brown);
+            background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Ctext x='20' y='40' fill='%23000' font-size='15' opacity='0.05'%3E🍰 %3C/text%3E%3Ctext x='70' y='90' fill='%23000' font-size='12' opacity='0.05'%3E🧁 %3C/text%3E%3C/svg%3E");
             height: 100%;
             position: relative;
             display: flex;
@@ -39,16 +49,16 @@
             border-right: 1px solid #ffffff10;
         }
 
-        /* HEADER - Matches your "Good" Screenshot */
         header {
             background-color: var(--brand-brown);
             padding: 20px;
             text-align: center;
             border-bottom: 1px solid rgba(255,255,255,0.1);
             flex-shrink: 0;
+            position: relative;
+            z-index: 10;
         }
 
-        /* CODED LOGO - Never fails to load */
         .logo-area {
             display: flex;
             flex-direction: column;
@@ -73,27 +83,37 @@
             font-style: italic;
         }
 
-        /* SCROLLABLE CONTENT */
         #content-area {
             flex: 1;
-            overflow-y: auto; /* Allows scrolling inside the "phone" */
+            overflow-y: auto;
             padding: 20px;
-            padding-bottom: 100px; /* Space for bottom nav */
+            padding-bottom: 100px;
+            position: relative;
+            z-index: 5;
         }
 
-        /* URGENT NOTICE */
         .notice-card {
             background: linear-gradient(135deg, #be9b7b 0%, #a88b6f 100%);
             color: #4d1d0c;
             padding: 15px;
             border-radius: 16px;
             text-align: center;
-            margin-bottom: 25px;
+            margin-bottom: 15px;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
             border: 2px solid rgba(255,255,255,0.2);
         }
 
-        /* MENU ITEMS */
+        /* INSTALL CARD - NOW ALWAYS VISIBLE BY DEFAULT */
+        .install-prompt-card {
+            background: rgba(255, 255, 255, 0.08);
+            border: 2px dashed var(--brand-gold);
+            border-radius: 16px;
+            padding: 18px;
+            text-align: center;
+            margin-bottom: 25px;
+            display: block; /* Always visible for your testing */
+        }
+
         .menu-card {
             background: white;
             color: #4d1d0c;
@@ -117,7 +137,6 @@
         }
         .add-btn:active { transform: scale(0.95); }
 
-        /* FOOTER INFO */
         .footer-info {
             text-align: center;
             font-size: 11px;
@@ -134,18 +153,18 @@
             margin-right: 5px;
         }
 
-        /* NAVIGATION */
         nav {
             position: absolute;
             bottom: 0;
             left: 0;
             width: 100%;
-            background: #3d170a; /* Slightly lighter brown */
+            background: #3d170a; 
             display: flex;
             justify-content: space-around;
             padding: 12px 0;
             border-top: 1px solid rgba(255,255,255,0.1);
             backdrop-filter: blur(10px);
+            z-index: 20;
         }
         .nav-item {
             background: none;
@@ -195,7 +214,40 @@
             display: none;
         }
 
-        /* CHECKOUT OVERLAY */
+        #install-popup {
+            position: fixed;
+            bottom: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 90%;
+            max-width: 400px;
+            background: white;
+            color: var(--brand-brown);
+            border-radius: 20px;
+            padding: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            z-index: 2000;
+            display: none;
+            animation: slideUp 0.5s ease;
+        }
+
+        @keyframes slideUp {
+            from { bottom: -200px; }
+            to { bottom: 80px; }
+        }
+
+        .install-btn {
+            background: var(--brand-brown);
+            color: white;
+            width: 100%;
+            padding: 12px;
+            border-radius: 12px;
+            font-weight: bold;
+            margin-top: 15px;
+            border: none;
+            cursor: pointer;
+        }
+
         #checkout-overlay {
             position: absolute;
             top: 0;
@@ -222,7 +274,6 @@
             padding: 20px;
         }
 
-        /* FORM ELEMENTS */
         .form-group { margin-bottom: 20px; }
         .form-label {
             font-size: 11px;
@@ -241,11 +292,10 @@
             border-radius: 10px;
             outline: none;
             font-family: inherit;
-            box-sizing: border-box; /* Important for laptop resizing */
+            box-sizing: border-box;
         }
         .form-input:focus { border-color: var(--brand-gold); }
 
-        /* TOGGLE BUTTONS */
         .toggle-group { display: flex; gap: 10px; }
         .toggle-opt {
             flex: 1;
@@ -277,70 +327,104 @@
             cursor: pointer;
             box-shadow: 0 4px 10px rgba(37, 211, 102, 0.3);
         }
+
+        .remove-item-btn {
+            color: #ff4d4d;
+            background: none;
+            border: none;
+            font-weight: bold;
+            font-size: 10px;
+            cursor: pointer;
+            text-transform: uppercase;
+        }
+
+        #validation-msg {
+            background: #ffe6e6;
+            color: #cc0000;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 12px;
+            font-weight: bold;
+            text-align: center;
+            margin-bottom: 15px;
+            display: none;
+        }
     </style>
 </head>
 <body>
 
     <div id="app-container">
         
-        <!-- HEADER WITH LOGO -->
         <header>
             <div class="logo-area">
-                <!-- Using EMOJI/TEXT logo because user liked this specific look -->
-                <div class="logo-icon">🍰</div>
+                <div class="logo-icon">🍰 </div>
                 <div class="brand-title">Orikek</div>
                 <div class="brand-subtitle">a daily celebration...</div>
             </div>
         </header>
 
-        <!-- MAIN CONTENT -->
         <div id="content-area">
             
-            <!-- HOME VIEW -->
             <div id="view-home">
-                <!-- 24H Notice -->
                 <div class="notice-card">
                     <div style="font-size:10px; font-weight:900; text-transform:uppercase; margin-bottom:4px;">⚠️ Important</div>
                     <div style="font-size:16px; font-weight:800; line-height:1.2;">ORDER 24 HOURS<br>IN ADVANCE</div>
                 </div>
 
+                <!-- UPDATED: Always Visible Home-Screen Install Prompt for testing -->
+                <div id="home-install-card" class="install-prompt-card">
+                    <div style="font-size: 14px; font-weight: bold; color: var(--brand-gold); margin-bottom: 8px;">🍰 Save Orikek to Home Screen</div>
+                    <div style="font-size: 11px; margin-bottom: 12px; opacity: 0.8;">Get quick access to your favorite cakes anytime!</div>
+                    <button onclick="handleInstallClick()" style="background: var(--brand-gold); color: var(--brand-brown); padding: 10px 24px; border-radius: 10px; font-weight: 900; border: none; font-size: 12px; cursor: pointer; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">INSTALL APPLICATION</button>
+                </div>
+
                 <h3 style="font-size:18px; font-weight:bold; margin-bottom:15px; border-left:4px solid var(--brand-gold); padding-left:10px;">Today's Menu</h3>
                 
-                <div id="menu-list">
-                    <!-- Menu items injected via JS -->
-                </div>
+                <div id="menu-list"></div>
 
                 <div class="footer-info">
                     <p><span class="fssai">fssai</span> : 21524009000527</p>
-                    <p style="margin-top:5px;">📷 @orikek9</p>
+                    <p style="margin-top:5px;">
+                        <a href="https://www.instagram.com/orikek9/" target="_blank" style="color: inherit; text-decoration: none;">📷 @orikek9</a>
+                    </p>
                 </div>
             </div>
 
-            <!-- PROFILE VIEW -->
             <div id="view-profile" style="display:none; text-align:center; padding-top:50px;">
-                <div style="font-size:60px; margin-bottom:10px;">👤</div>
+                <div style="font-size:60px; margin-bottom:10px;">👤 </div>
                 <h2 style="font-size:24px;">Orikek Member</h2>
                 <p style="opacity:0.6;">Premium Gourmet Account</p>
-                <div style="margin-top:30px; background:rgba(255,255,255,0.05); padding:20px; border-radius:12px;">
+                
+                <div style="margin-top:20px; background:rgba(255,255,255,0.03); padding:20px; border-radius:12px;">
                     No active orders.
                 </div>
             </div>
 
         </div>
 
-        <!-- NAVIGATION -->
+        <div id="install-popup">
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <div style="font-size: 40px;">🎂 </div>
+                <div style="flex: 1;">
+                    <div style="font-weight: 800; font-size: 18px;">Install Orikek App</div>
+                    <div style="font-size: 13px; opacity: 0.8;">Order faster and get daily updates!</div>
+                </div>
+                <button onclick="closeInstallPopup()" style="font-size: 24px; color: #999; background: none; border: none;">&times;</button>
+            </div>
+            <button class="install-btn" onclick="handleInstallClick()">ADD TO HOME SCREEN</button>
+        </div>
+
         <nav>
-            <button class="nav-item active" onclick="showView('home')">Menu</button>
+            <button class="nav-item active" id="nav-home" onclick="showView('home')">Menu</button>
             <div class="cart-btn-wrapper">
                 <button class="cart-btn" onclick="openCheckout()">
-                    🛒
+                    🛒 
                     <div id="cart-badge">0</div>
                 </button>
             </div>
-            <button class="nav-item" onclick="showView('profile')">Profile</button>
+            <button class="nav-item" id="nav-profile" onclick="showView('profile')">Profile</button>
         </nav>
 
-        <!-- CHECKOUT MODAL -->
         <div id="checkout-overlay">
             <div class="checkout-header">
                 <h2 style="font-size:20px; font-weight:bold; margin:0;">Complete Order</h2>
@@ -348,31 +432,24 @@
             </div>
             
             <div class="checkout-body">
-                <!-- Cart Summary -->
-                <div id="cart-summary" style="background:rgba(255,255,255,0.1); padding:15px; border-radius:12px; margin-bottom:25px;">
-                    <!-- Items go here -->
-                </div>
+                <div id="validation-msg"></div>
+                <div id="cart-summary" style="background:rgba(255,255,255,0.1); padding:15px; border-radius:12px; margin-bottom:25px;"></div>
 
                 <div class="form-group">
                     <label class="form-label">Full Name</label>
-                    <input type="text" id="c-name" class="form-input" placeholder="Your Name">
+                    <input type="text" id="c-name" class="form-input" placeholder="Your Name" onchange="saveDetails()">
                 </div>
-
                 <div class="form-group">
                     <label class="form-label">Phone Number</label>
-                    <input type="tel" id="c-phone" class="form-input" placeholder="Mobile Number">
+                    <input type="tel" id="c-phone" class="form-input" placeholder="Mobile Number" onchange="saveDetails()">
                 </div>
-
-                <!-- DIETARY TOGGLE -->
                 <div class="form-group">
                     <label class="form-label">Dietary Preference</label>
                     <div class="toggle-group">
-                        <div class="toggle-opt selected" onclick="setDiet('100% EGGLESS', this)">🌱 100% EGGLESS</div>
-                        <div class="toggle-opt" onclick="setDiet('WITH EGG', this)">🥚 WITH EGG</div>
+                        <div class="toggle-opt selected" id="diet-eggless" onclick="setDiet('100% EGGLESS', this)">🌱 100% EGGLESS</div>
+                        <div class="toggle-opt" id="diet-egg" onclick="setDiet('WITH EGG', this)">🥚 WITH EGG</div>
                     </div>
                 </div>
-
-                <!-- WEIGHT TOGGLE -->
                 <div class="form-group">
                     <label class="form-label">Cake Weight</label>
                     <div class="toggle-group">
@@ -381,8 +458,6 @@
                         <div class="toggle-opt" onclick="setWeight(2.0, this)">2.0 KG</div>
                     </div>
                 </div>
-
-                <!-- DATE & TIME -->
                 <div class="form-group" style="display:flex; gap:10px;">
                     <div style="flex:1;">
                         <label class="form-label">Date</label>
@@ -393,21 +468,17 @@
                         <input type="time" id="c-time" class="form-input">
                     </div>
                 </div>
-
                 <div class="form-group">
                     <label class="form-label">Message on Cake (Optional)</label>
                     <input type="text" id="c-msg" class="form-input" placeholder="e.g. Happy Birthday!">
                 </div>
-
                 <div class="form-group">
                     <label class="form-label">Delivery Address</label>
-                    <textarea id="c-addr" class="form-textarea" rows="3" placeholder="Full address..."></textarea>
+                    <textarea id="c-addr" class="form-textarea" rows="3" placeholder="Full address..." onchange="saveDetails()"></textarea>
                 </div>
-
                 <div style="text-align:center; margin-bottom:20px; font-size:12px; opacity:0.7;">
                     ✅ By clicking below, I confirm I am ordering 24 hours in advance.
                 </div>
-
                 <button class="whatsapp-btn" onclick="sendOrder()">SEND TO WHATSAPP</button>
             </div>
         </div>
@@ -426,25 +497,100 @@
         let cart = [];
         let weight = 0.5;
         let diet = "100% EGGLESS";
+        let deferredPrompt;
 
-        // Render Menu
-        const list = document.getElementById('menu-list');
-        menu.forEach(item => {
-            list.innerHTML += `
-                <div class="menu-card">
-                    <div>
-                        <div style="font-weight:bold; font-size:16px;">${item.name}</div>
-                        <div style="font-size:12px; color:#666;">${item.desc}</div>
-                        <div style="font-weight:900; color:#e31e24; margin-top:4px;">₹${item.price}</div>
-                    </div>
-                    <button class="add-btn" onclick="addToCart('${item.name}', ${item.price})">ADD</button>
-                </div>
-            `;
+        // PWA Install Logic
+        window.addEventListener('beforeinstallprompt', (e) => {
+            e.preventDefault();
+            deferredPrompt = e;
+            
+            // Show manual install card on home screen explicitly
+            document.getElementById('home-install-card').style.display = 'block';
+
+            // Check for one-time automatic popup logic
+            const alreadyPrompted = localStorage.getItem('orikek_install_prompted');
+            
+            if (!alreadyPrompted) {
+                setTimeout(() => {
+                    if (deferredPrompt) {
+                        document.getElementById('install-popup').style.display = 'block';
+                        localStorage.setItem('orikek_install_prompted', 'true');
+                    }
+                }, 10000); 
+            }
         });
 
+        window.addEventListener('appinstalled', () => {
+            // Hide everything once it's done
+            document.getElementById('home-install-card').style.display = 'none';
+            document.getElementById('install-popup').style.display = 'none';
+            deferredPrompt = null;
+        });
+
+        function handleInstallClick() {
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('User accepted install');
+                    }
+                    deferredPrompt = null;
+                    closeInstallPopup();
+                });
+            } else {
+                // Better instructions for mobile users
+                alert("To install Orikek:\n\n1. Tap the Browser Menu (3 dots or share icon)\n2. Select 'Add to Home Screen'\n\nThis makes ordering your favorite cakes much easier! 🎂 ");
+            }
+        }
+
+        function closeInstallPopup() {
+            document.getElementById('install-popup').style.display = 'none';
+        }
+
+        window.onload = function() {
+            if(localStorage.getItem('orikek_name')) document.getElementById('c-name').value = localStorage.getItem('orikek_name');
+            if(localStorage.getItem('orikek_phone')) document.getElementById('c-phone').value = localStorage.getItem('orikek_phone');
+            if(localStorage.getItem('orikek_addr')) document.getElementById('c-addr').value = localStorage.getItem('orikek_addr');
+            
+            renderMenu();
+        };
+
+        function renderMenu() {
+            const list = document.getElementById('menu-list');
+            list.innerHTML = '';
+            menu.forEach(item => {
+                list.innerHTML += `
+                    <div class="menu-card">
+                        <div>
+                            <div style="font-weight:bold; font-size:16px;">${item.name}</div>
+                            <div style="font-size:12px; color:#666;">${item.desc}</div>
+                            <div style="font-weight:900; color:#e31e24; margin-top:4px;">₹${item.price}</div>
+                        </div>
+                        <button class="add-btn" onclick="addToCart('${item.name}', ${item.price})">ADD</button>
+                    </div>
+                `;
+            });
+        }
+
+        function saveDetails() {
+            localStorage.setItem('orikek_name', document.getElementById('c-name').value);
+            localStorage.setItem('orikek_phone', document.getElementById('c-phone').value);
+            localStorage.setItem('orikek_addr', document.getElementById('c-addr').value);
+        }
+
         function addToCart(name, price) {
-            cart.push({name, price});
+            cart.push({name, price, id: Date.now() + Math.random()});
             updateCartUI();
+        }
+
+        function removeFromCart(id) {
+            cart = cart.filter(item => item.id !== id);
+            updateCartUI();
+            if(cart.length === 0) {
+                closeCheckout();
+            } else {
+                renderSummary();
+            }
         }
 
         function updateCartUI() {
@@ -454,10 +600,8 @@
         }
 
         function openCheckout() {
-            if(cart.length === 0) {
-                alert("Your cart is empty!");
-                return;
-            }
+            if(cart.length === 0) return;
+            document.getElementById('validation-msg').style.display = 'none';
             renderSummary();
             document.getElementById('checkout-overlay').style.display = 'flex';
         }
@@ -484,12 +628,14 @@
             let html = '<div style="font-size:12px; margin-bottom:5px; font-weight:bold;">Items:</div>';
             cart.forEach(i => {
                 total += i.price;
-                html += `<div style="font-size:12px; opacity:0.8;">• ${i.name}</div>`;
+                html += `
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
+                    <div style="font-size:12px; opacity:0.8;">• ${i.name}</div>
+                    <button class="remove-item-btn" onclick="removeFromCart(${i.id})">Remove</button>
+                </div>`;
             });
             
-            // Basic weight calculation
             let finalPrice = (total / 0.5) * weight;
-            
             html += `<div style="margin-top:10px; padding-top:10px; border-top:1px solid rgba(255,255,255,0.2); display:flex; justify-content:space-between; font-weight:bold;">
                         <span>Total (${weight}kg):</span>
                         <span>₹${finalPrice}</span>
@@ -507,34 +653,41 @@
             const msg = document.getElementById('c-msg').value;
             const addr = document.getElementById('c-addr').value;
             const total = document.getElementById('cart-summary').dataset.total;
+            const validationBox = document.getElementById('validation-msg');
+
+            validationBox.style.display = 'none';
 
             if(!name || !phone || !date) {
-                alert("Please fill Name, Phone, and Date!");
-                return;
+                validationBox.innerText = "Please fill Name, Phone, and Date!";
+                validationBox.style.display = 'block';
+                document.querySelector('.checkout-body').scrollTop = 0;
+            } else {
+                saveDetails();
+                let itemsList = cart.map(i => i.name).join(', ');
+                const text = `*NEW ORIKEK ORDER* 🎂 \n\n` +
+                             `TYPE: ${diet}\n` +
+                             `WEIGHT: ${weight} KG\n` +
+                             `WHEN: ${date} at ${time}\n\n` +
+                             `ITEMS: ${itemsList}\n` +
+                             `MSG ON CAKE: ${msg}\n` +
+                             `ADDRESS: ${addr}\n\n` +
+                             `CUSTOMER: ${name} (${phone})\n` +
+                             `TOTAL: ₹${total}\n\n` +
+                             `_24h Advance Order Confirmed_`;
+
+                window.open(`https://wa.me/${OWNER_PHONE}?text=${encodeURIComponent(text)}`, '_blank');
             }
-
-            let itemsList = cart.map(i => i.name).join(', ');
-
-            const text = `*NEW ORIKEK ORDER* 🎂\n\n` +
-                         `TYPE: ${diet}\n` +
-                         `WEIGHT: ${weight} KG\n` +
-                         `WHEN: ${date} at ${time}\n\n` +
-                         `ITEMS: ${itemsList}\n` +
-                         `MSG ON CAKE: ${msg}\n` +
-                         `ADDRESS: ${addr}\n\n` +
-                         `CUSTOMER: ${name} (${phone})\n` +
-                         `TOTAL: ₹${total}\n\n` +
-                         `_24h Advance Order Confirmed_`;
-
-            window.open(`https://wa.me/${OWNER_PHONE}?text=${encodeURIComponent(text)}`, '_blank');
         }
 
         function showView(view) {
             document.getElementById('view-home').style.display = 'none';
             document.getElementById('view-profile').style.display = 'none';
             document.getElementById('view-' + view).style.display = 'block';
+            
+            document.getElementById('nav-home').classList.remove('active');
+            document.getElementById('nav-profile').classList.remove('active');
+            document.getElementById('nav-' + view).classList.add('active');
         }
     </script>
-
 </body>
 </html>
