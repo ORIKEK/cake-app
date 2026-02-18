@@ -8,7 +8,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <style>
         :root {
-            --primary-brown: #4d1d0c; 
+            --primary-brown: #4d1d0c; /* Matches the logo background */
             --accent-gold: #be9b7b;
             --bg-dark: #3a1609;
             --text-on-white: #4d1d0c;
@@ -73,6 +73,11 @@
             border-color: var(--accent-gold);
         }
 
+        input[type="date"]::-webkit-calendar-picker-indicator,
+        input[type="time"]::-webkit-calendar-picker-indicator {
+            filter: invert(1);
+        }
+
         label {
             font-size: 10px;
             text-transform: uppercase;
@@ -97,6 +102,36 @@
             text-align: center;
             gap: 4px;
         }
+
+        .toggle-btn {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid rgba(255,255,255,0.1);
+            color: white;
+            padding: 10px 8px;
+            border-radius: 10px;
+            font-size: 11px;
+            font-weight: bold;
+            flex: 1;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2px;
+        }
+
+        .toggle-btn.active {
+            background: #be9b7b;
+            color: #4d1d0c;
+            border-color: white;
+            transform: scale(1.05);
+        }
+
+        .logo-img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+        }
     </style>
 </head>
 <body>
@@ -106,16 +141,17 @@
         <div class="max-w-md mx-auto">
             <div class="flex items-center justify-between mb-4">
                 <div class="flex items-center gap-3">
-                    <div class="w-12 h-12 rounded-xl bg-white flex items-center justify-center shadow-lg">
-                         <span class="text-2xl">🎂</span>
+                    <div class="w-14 h-14 rounded-xl overflow-hidden bg-transparent flex items-center justify-center">
+                         <!-- Official Orikek Logo -->
+                         <img src="https://raw.githubusercontent.com/Anshul-Orikek/Assets/main/ORIKEK_20260206_001517_0000.png" alt="Orikek Logo" class="logo-img" onerror="this.src='https://via.placeholder.com/150?text=Orikek'">
                     </div>
                     <div>
                         <h1 class="text-xl font-bold tracking-tight text-white leading-none">ORIKEK</h1>
                         <p class="text-[10px] text-orange-200/70 mt-1 uppercase tracking-widest">A Daily Celebration</p>
                     </div>
                 </div>
-                <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center">
-                    <span class="text-sm">🍰</span>
+                <div class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center overflow-hidden">
+                    <img src="https://raw.githubusercontent.com/Anshul-Orikek/Assets/main/ORIKEK_20260206_001517_0000.png" class="w-full h-full object-cover">
                 </div>
             </div>
             <div class="search-bar flex items-center gap-3 bg-white/5 px-4 py-3 rounded-2xl border border-white/10">
@@ -132,6 +168,7 @@
         <!-- HOME TAB -->
         <div id="home-tab" class="tab-content active space-y-6">
             
+            <!-- 24 Hour Notice preserved -->
             <div class="urgent-notice">
                 <div class="flex items-center gap-2 mb-1">
                     <span class="text-2xl">⚡</span>
@@ -144,7 +181,7 @@
 
             <div class="flex items-center justify-between">
                 <div>
-                    <h2 class="text-2xl font-bold tracking-tight text-white">Today's Specials</h2>
+                    <h2 class="text-2xl font-bold tracking-tight text-white">Our Creations</h2>
                     <p class="text-xs text-orange-200/60 font-medium">Baked fresh for your celebration</p>
                 </div>
             </div>
@@ -153,25 +190,14 @@
                 <!-- Items Injected Here -->
             </div>
 
-            <!-- FSSAI -->
+            <!-- FSSAI & Instagram Info preserved -->
             <div class="mt-8 pt-6 border-t border-white/5 text-center space-y-3 opacity-60">
                 <div class="flex items-center justify-center gap-2">
                     <div class="bg-white px-2 py-0.5 rounded text-[10px] font-bold text-blue-800 uppercase">fssai</div>
                     <span class="text-[10px] text-white">Lic No: 21524009000527</span>
                 </div>
-                <p class="text-[10px] text-white">📷 Instagram: orikek9</p>
-            </div>
-        </div>
-
-        <!-- HISTORY TAB -->
-        <div id="orders-tab" class="tab-content space-y-4">
-            <h1 class="text-2xl font-bold tracking-tight text-white">History</h1>
-            <div class="app-card bg-white/5 border-dashed border-white/10 flex flex-col items-center justify-center py-20 text-center">
-                <div class="w-16 h-16 bg-white/5 rounded-full flex items-center justify-center mb-4">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-8 w-8 text-orange-200/20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" /></svg>
-                </div>
-                <h3 class="font-bold text-white">No orders yet</h3>
-                <button onclick="switchTab('home-tab', document.getElementById('homeBtn'))" class="mt-4 text-orange-200 text-sm font-bold">Start Shopping</button>
+                <p class="text-[10px] text-white font-medium">📷 Instagram: @orikek9</p>
+                <p class="text-[9px] text-white/50">Made with love for your special moments.</p>
             </div>
         </div>
 
@@ -179,7 +205,9 @@
         <div id="profile-tab" class="tab-content space-y-6">
             <h1 class="text-2xl font-bold tracking-tight text-white">Account</h1>
             <div class="app-card p-6 flex items-center gap-5 bg-white">
-                <div class="w-16 h-16 bg-[#4d1d0c] rounded-2xl flex items-center justify-center text-white text-2xl font-bold">O</div>
+                <div class="w-16 h-16 bg-[#4d1d0c] rounded-2xl flex items-center justify-center overflow-hidden">
+                    <img src="https://raw.githubusercontent.com/Anshul-Orikek/Assets/main/ORIKEK_20260206_001517_0000.png" class="w-full h-full object-contain p-1">
+                </div>
                 <div>
                     <h2 class="font-bold text-[#4d1d0c] text-lg">Orikek Member</h2>
                     <p class="text-[10px] text-gray-500 uppercase tracking-widest font-bold">Premium Gourmet</p>
@@ -206,9 +234,9 @@
         </button>
     </nav>
 
-    <!-- Cart Overlay -->
+    <!-- Cart Overlay (Handles All Orders & Preferences) -->
     <div id="cartOverlay" class="fixed inset-0 bg-black/80 z-[60] hidden" onclick="toggleCart()">
-        <div class="absolute bottom-0 left-0 right-0 bg-[#4d1d0c] p-6 rounded-t-[2.5rem] flex flex-col max-h-[90%] overflow-y-auto" onclick="event.stopPropagation()">
+        <div class="absolute bottom-0 left-0 right-0 bg-[#4d1d0c] p-6 rounded-t-[2.5rem] flex flex-col max-h-[95%] overflow-y-auto" onclick="event.stopPropagation()">
             <div class="flex justify-between items-center mb-6">
                 <h2 id="cartHeaderTitle" class="text-xl font-bold text-white">Your Selections</h2>
                 <button onclick="toggleCart()" class="text-white opacity-50 text-2xl">&times;</button>
@@ -218,48 +246,82 @@
                 <div id="cartItems" class="space-y-3 mb-6"></div>
                 <div class="pt-4 border-t border-white/10">
                     <div class="flex justify-between items-center mb-6">
-                        <span class="text-white/60 font-bold uppercase text-xs">Subtotal</span>
+                        <span class="text-white/60 font-bold uppercase text-xs">Approx Subtotal</span>
                         <span id="cartTotal" class="text-2xl font-black text-white">₹0</span>
                     </div>
                     <button onclick="showCheckoutForm()" id="checkoutNextBtn" class="w-full bg-white text-[#4d1d0c] py-4 rounded-2xl font-bold flex items-center justify-center gap-2 shadow-xl">
-                        Next: Personalize
+                        Next: Details
                     </button>
                 </div>
             </div>
 
-            <div id="checkoutFormView" class="hidden space-y-4">
-                <div class="bg-white/10 p-4 rounded-xl border-2 border-[#be9b7b] text-center">
-                    <p class="text-[10px] font-black text-[#be9b7b] uppercase tracking-tighter mb-1">Final Reminder</p>
-                    <p class="text-sm text-white font-bold italic underline">"I understand my order requires 24 hours prep time"</p>
+            <div id="checkoutFormView" class="hidden space-y-5 pb-10">
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label>Full Name</label>
+                        <input type="text" id="custName" class="input-field" placeholder="Name">
+                    </div>
+                    <div>
+                        <label>Phone Number</label>
+                        <input type="tel" id="custPhone" class="input-field" placeholder="Mobile">
+                    </div>
                 </div>
 
                 <div>
-                    <label>Full Name</label>
-                    <input type="text" id="custName" class="input-field" placeholder="Enter your name">
+                    <label>Dietary Preference</label>
+                    <div class="flex gap-2 mt-1" id="dietarySelector">
+                        <button class="toggle-btn active" onclick="setDietary('100% EGGLESS', this)">
+                            <span class="text-base">🌱</span>
+                            <span>100% EGGLESS</span>
+                        </button>
+                        <button class="toggle-btn" onclick="setDietary('WITH EGG', this)">
+                            <span class="text-base">🥚</span>
+                            <span>WITH EGG</span>
+                        </button>
+                    </div>
                 </div>
+
                 <div>
-                    <label>Phone Number</label>
-                    <input type="tel" id="custPhone" class="input-field" placeholder="Enter mobile number">
+                    <label>Weight</label>
+                    <div class="flex gap-2 mt-1" id="weightSelector">
+                        <button class="toggle-btn active" onclick="setWeight(0.5, this)">0.5 KG</button>
+                        <button class="toggle-btn" onclick="setWeight(1, this)">1.0 KG</button>
+                        <button class="toggle-btn" onclick="setWeight(2, this)">2.0+ KG</button>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label>Order Date</label>
+                        <input type="date" id="orderDate" class="input-field">
+                    </div>
+                    <div>
+                        <label>Order Time</label>
+                        <input type="time" id="orderTime" class="input-field">
+                    </div>
                 </div>
                 
-                <!-- NEW CUSTOMIZATION FIELDS -->
-                <div class="grid grid-cols-1 gap-4 bg-white/5 p-4 rounded-2xl border border-white/10">
-                    <div>
-                        <label>Message on Cake (Optional)</label>
-                        <input type="text" id="cakeMessage" class="input-field" placeholder="e.g. Happy Birthday Rahul!">
-                    </div>
-                    <div>
-                        <label>Special Instructions</label>
-                        <textarea id="custAddress" class="input-field h-20" placeholder="Address and any specific flavor/design notes..."></textarea>
+                <div>
+                    <label>Message on Cake</label>
+                    <input type="text" id="cakeMessage" class="input-field" placeholder="Message...">
+                </div>
+
+                <div>
+                    <label>Address / Notes</label>
+                    <textarea id="custAddress" class="input-field h-24" placeholder="Full address or flavor notes..."></textarea>
+                </div>
+
+                <div class="bg-white/5 p-4 rounded-xl border border-white/10">
+                    <div class="flex justify-between items-center">
+                        <span class="text-white/50 text-xs font-bold uppercase">Estimated Bill</span>
+                        <span id="finalBill" class="text-xl font-black text-white">₹0</span>
                     </div>
                 </div>
 
-                <div class="flex gap-3 pt-4">
-                    <button onclick="backToCart()" class="flex-1 border border-white/10 text-white/60 py-4 rounded-2xl font-bold">
-                        Back
-                    </button>
+                <div class="flex gap-3 pt-2">
+                    <button onclick="backToCart()" class="flex-1 border border-white/10 text-white/60 py-4 rounded-2xl font-bold">Back</button>
                     <button onclick="checkoutToWhatsApp()" class="flex-[2] bg-[#25D366] text-white py-4 rounded-2xl font-bold flex items-center justify-center gap-2 shadow-xl">
-                        Order on WhatsApp
+                        Send to WhatsApp
                     </button>
                 </div>
             </div>
@@ -278,6 +340,8 @@
         ];
 
         let cart = [];
+        let selectedWeight = 0.5;
+        let selectedDietary = '100% EGGLESS';
 
         function renderMenu(items = menu) {
             const container = document.getElementById('menuContainer');
@@ -292,32 +356,25 @@
                         <p class="text-[10px] text-gray-500 line-clamp-1">${item.desc}</p>
                         <p class="text-sm font-black text-[#4d1d0c] mt-1">₹${item.price}</p>
                     </div>
-                    <button onclick="addToCart(${item.id})" class="h-10 w-10 bg-[#4d1d0c] text-white rounded-xl flex items-center justify-center active:scale-90 transition-transform shadow-lg">
+                    <button onclick="addToCart(${item.id})" class="h-10 w-10 bg-[#4d1d0c] text-white rounded-xl flex items-center justify-center active:scale-90 transition-transform">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M12 4v16m8-8H4" /></svg>
                     </button>
                 </div>
             `).join('');
         }
 
-        function searchMenu() {
-            const query = document.getElementById('searchInput').value.toLowerCase();
-            const filtered = menu.filter(item => item.name.toLowerCase().includes(query));
-            renderMenu(filtered);
-        }
-
-        function switchTab(tabId, btn) {
-            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-            document.getElementById(tabId).classList.add('active');
-            document.querySelectorAll('nav button').forEach(b => b.classList.add('text-white/40'));
-            btn.classList.remove('text-white/40');
-            btn.classList.add('text-white');
-        }
-
-        window.addToCart = (id) => {
-            const item = menu.find(i => i.id === id);
-            cart.push(item);
+        function setWeight(w, btn) {
+            selectedWeight = w;
+            btn.parentElement.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
             updateCart();
-        };
+        }
+
+        function setDietary(pref, btn) {
+            selectedDietary = pref;
+            btn.parentElement.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+        }
 
         function updateCart() {
             const count = document.getElementById('cartCount');
@@ -326,81 +383,84 @@
 
             const itemsList = document.getElementById('cartItems');
             const totalEl = document.getElementById('cartTotal');
-            let total = 0;
-
+            const finalBillEl = document.getElementById('finalBill');
+            
+            let baseTotal = 0;
             itemsList.innerHTML = cart.map((item, index) => {
-                total += item.price;
+                baseTotal += item.price;
                 return `
                     <div class="flex justify-between items-center bg-white/5 p-4 rounded-xl">
                         <div class="flex items-center gap-3">
                             <span class="text-xl">${item.emoji}</span>
-                            <div>
-                                <p class="font-bold text-white text-xs">${item.name}</p>
-                                <p class="text-[10px] text-white/40">₹${item.price}</p>
-                            </div>
+                            <div><p class="font-bold text-white text-xs">${item.name}</p></div>
                         </div>
-                        <button onclick="removeFromCart(${index})" class="text-white/20 hover:text-red-400 font-bold text-xl">&times;</button>
+                        <button onclick="removeFromCart(${index})" class="text-white/20 font-bold text-xl">&times;</button>
                     </div>
                 `;
             }).join('');
-            totalEl.innerText = `₹${total}`;
-            
-            if (cart.length === 0) {
-                itemsList.innerHTML = '<p class="text-center text-white/40 py-10">Your selection is empty</p>';
-                document.getElementById('checkoutNextBtn').disabled = true;
-                document.getElementById('checkoutNextBtn').style.opacity = "0.5";
-            } else {
-                document.getElementById('checkoutNextBtn').disabled = false;
-                document.getElementById('checkoutNextBtn').style.opacity = "1";
-            }
+
+            const finalTotal = (baseTotal / 0.5) * selectedWeight;
+            totalEl.innerText = `₹${finalTotal}`;
+            finalBillEl.innerText = `₹${finalTotal}`;
         }
 
+        window.addToCart = (id) => {
+            cart.push(menu.find(i => i.id === id));
+            updateCart();
+        };
+
         window.removeFromCart = (i) => { cart.splice(i, 1); updateCart(); }
-        
-        window.toggleCart = () => {
-            document.getElementById('cartOverlay').classList.toggle('hidden');
-            backToCart(); 
+        window.toggleCart = () => { document.getElementById('cartOverlay').classList.toggle('hidden'); }
+        window.searchMenu = () => {
+            const q = document.getElementById('searchInput').value.toLowerCase();
+            renderMenu(menu.filter(item => item.name.toLowerCase().includes(q)));
         }
 
         window.showCheckoutForm = () => {
-            if(cart.length === 0) return;
             document.getElementById('cartItemsView').classList.add('hidden');
             document.getElementById('checkoutFormView').classList.remove('hidden');
-            document.getElementById('cartHeaderTitle').innerText = "Delivery & Customization";
         }
 
         window.backToCart = () => {
             document.getElementById('cartItemsView').classList.remove('hidden');
             document.getElementById('checkoutFormView').classList.add('hidden');
-            document.getElementById('cartHeaderTitle').innerText = "Your Selections";
         }
 
         window.checkoutToWhatsApp = () => {
             const name = document.getElementById('custName').value.trim();
             const phone = document.getElementById('custPhone').value.trim();
+            const date = document.getElementById('orderDate').value;
+            const time = document.getElementById('orderTime').value;
             const address = document.getElementById('custAddress').value.trim();
             const cakeMsg = document.getElementById('cakeMessage').value.trim() || "None";
 
-            if(!name || !phone || !address) {
-                alert("Please fill in your name, phone, and address!");
-                return;
+            if(!name || !phone || !date || !time || !address) {
+                alert("Please fill all details!"); return;
             }
 
-            const total = cart.reduce((sum, item) => sum + item.price, 0);
-            const itemsText = cart.map(i => `• ${i.name} (₹${i.price})`).join('\n');
+            const itemsText = cart.map(i => `• ${i.name}`).join('\n');
+            const finalTotal = document.getElementById('finalBill').innerText;
             
             const msg = `🎂 *NEW ORIKEK ORDER*\n` +
-                        `------------------------------\n` +
-                        `⏰ *24h LEAD TIME:* ACKNOWLEDGED\n\n` +
-                        `*Customer:* ${name}\n` +
-                        `*Mobile:* ${phone}\n\n` +
-                        `*Items Ordered:* \n${itemsText}\n\n` +
-                        `✨ *Message on Cake:* ${cakeMsg}\n` +
-                        `📍 *Instructions/Address:* ${address}\n\n` +
-                        `*Total Bill:* ₹${total}\n\n` +
-                        `_Ordering via Orikek App_`;
+                        `📅 *DATE:* ${date} | *TIME:* ${time}\n` +
+                        `⚖️ *WEIGHT:* ${selectedWeight} KG\n` +
+                        `✨ *DIETARY:* ${selectedDietary}\n\n` +
+                        `*Customer Details:*\n` +
+                        `Name: ${name}\n` +
+                        `Mobile: ${phone}\n\n` +
+                        `*Items:*\n${itemsText}\n\n` +
+                        `📝 *Cake Msg:* ${cakeMsg}\n` +
+                        `📍 *Address:* ${address}\n\n` +
+                        `💰 *Total:* ${finalTotal}`;
 
             window.open(`https://wa.me/${OWNER_PHONE}?text=${encodeURIComponent(msg)}`, '_blank');
+        }
+
+        function switchTab(tabId, btn) {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.getElementById(tabId).classList.add('active');
+            document.querySelectorAll('nav button').forEach(b => b.classList.add('text-white/40'));
+            btn.classList.remove('text-white/40'); btn.classList.add('text-white');
         }
 
         renderMenu();
