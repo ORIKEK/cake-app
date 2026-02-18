@@ -1,203 +1,409 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Home Cake Shop</title>
-  <link rel="manifest" href="manifest.json">
-  
-  <style>
-    /* Base Styles */
-    body {
-      margin: 0;
-      font-family: 'Segoe UI', Arial, sans-serif;
-      background: #fff7f2;
-      color: #333;
-      transition: background 0.3s ease; /* Smooth dark mode fade */
-      -webkit-tap-highlight-color: transparent; /* Makes it feel like an app */
-      user-select: none; /* Prevents accidental text highlighting */
-    }
-
-    /* Dark Mode */
-    body.dark {
-      background: #121212;
-      color: #e0e0e0;
-    }
-    body.dark .card {
-      background: #1e1e1e;
-      color: white;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
-    }
-    body.dark .header {
-      background: #1a1a1a;
-      border-bottom: 1px solid #333;
-    }
-
-    /* Header & Navigation */
-    .header {
-      background: #e23744;
-      color: white;
-      padding: 20px 15px;
-      text-align: center;
-      position: sticky; /* Stays at the top like an app */
-      top: 0;
-      z-index: 100;
-      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-    }
-
-    .nav-buttons {
-      margin-top: 10px;
-    }
-
-    .nav-btn {
-      padding: 8px 15px;
-      border-radius: 20px;
-      border: 1px solid rgba(255,255,255,0.3);
-      background: rgba(255,255,255,0.2);
-      color: white;
-      font-size: 14px;
-      cursor: pointer;
-    }
-
-    /* Content Area */
-    .container {
-      padding: 15px;
-      max-width: 600px; /* Centers app on large screens */
-      margin: 0 auto;
-    }
-
-    h2 {
-      margin-top: 25px;
-      color: #e23744;
-      font-size: 1.2rem;
-      border-left: 4px solid #e23744;
-      padding-left: 10px;
-    }
-
-    /* Cake Cards */
-    .card {
-      background: white;
-      border-radius: 15px;
-      padding: 18px;
-      margin-bottom: 15px;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-      transition: transform 0.1s;
-    }
-    
-    .card:active {
-      transform: scale(0.98); /* Slight shrink when tapped */
-    }
-
-    .card h3 {
-      margin: 0 0 5px 0;
-    }
-
-    .price {
-      color: #2e7d32;
-      font-weight: bold;
-      font-size: 18px;
-      margin: 8px 0;
-    }
-
-    /* Order Button */
-    .order-btn {
-      width: 100%;
-      padding: 14px;
-      background: #e23744;
-      color: white;
-      border: none;
-      border-radius: 10px;
-      font-size: 16px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home Cake Shop Pro</title>
+    <!-- Web App Manifest for Installability -->
+    <link rel="manifest" href="data:application/manifest+json,{%22name%22:%22Home%20Cake%20Shop%22,%22short_name%22:%22Cakes%22,%22start_url%22:%22.%22,%22display%22:%22standalone%22,%22background_color%22:%22#ffffff%22,%22theme_color%22:%22#e23744%22,%22icons%22:[{%22src%22:%22https://cdn-icons-png.flaticon.com/512/992/992717.png%22,%22sizes%22:%22512x512%22,%22type%22:%22image/png%22}]}">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #e23744;
+            --bg-light: #fffaf5;
+            --bg-dark: #121212;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            -webkit-tap-highlight-color: transparent;
+            transition: all 0.3s ease;
+        }
+        .dark-mode {
+            background-color: var(--bg-dark) !important;
+            color: #e0e0e0 !important;
+        }
+        .dark-mode .cake-card, .dark-mode .cart-panel {
+            background-color: #1e1e1e !important;
+            border-color: #333 !important;
+        }
+        .dark-mode .cake-card h3 { color: white; }
+        .cake-card {
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .cake-card:active {
+            transform: scale(0.96);
+        }
+        .modal-enter {
+            animation: modalFadeIn 0.3s ease forwards;
+        }
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .badge {
+            position: absolute;
+            top: -5px;
+            right: -5px;
+            background: #e23744;
+            color: white;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 99px;
+            font-weight: bold;
+        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+    </style>
 </head>
-<body>
+<body class="bg-[#fffaf5] text-gray-800 pb-24">
 
-<div class="header">
-  <div style="font-size: 24px;">🍰 Home Cake Shop</div>
-  <div class="nav-buttons">
-    <button class="nav-btn" onclick="toggleDark()">🌙 Mode</button>
-    <button class="nav-btn" onclick="showAdmin()" style="margin-left:8px;">🧾 Admin</button>
-  </div>
-</div>
+    <!-- Header -->
+    <header class="sticky top-0 z-50 bg-[#e23744] text-white p-4 shadow-lg flex justify-between items-center">
+        <div class="flex items-center gap-3">
+            <div class="bg-white p-1 rounded-lg shadow-sm">🍰</div>
+            <div>
+                <h1 class="text-lg font-bold leading-tight">Mom's Bakery</h1>
+                <div class="flex items-center gap-1">
+                    <span class="text-[9px] bg-green-500 text-white px-1.5 py-0.5 rounded-full font-bold uppercase tracking-tighter">✓ Verified Baker</span>
+                </div>
+            </div>
+        </div>
+        <div class="flex gap-2">
+            <button onclick="toggleTheme()" id="themeBtn" class="p-2 bg-white/20 rounded-full hover:bg-white/30 transition-all">🌙</button>
+            <button onclick="toggleCart()" class="p-2 bg-white/20 rounded-full hover:bg-white/30 transition-all relative">
+                🛒 <span id="cartCount" class="badge">0</span>
+            </button>
+            <button onclick="openAdminModal()" class="p-2 bg-white/20 rounded-full hover:bg-white/30 transition-all">🔑</button>
+        </div>
+    </header>
 
-<div class="container">
-  <h2>🎂 Birthday Cakes</h2>
-  <div class="card">
-    <h3>Chocolate Birthday Cake</h3>
-    <p class="price">₹500</p>
-    <button class="order-btn" onclick="order('Chocolate Birthday Cake')">Order Now</button>
-  </div>
+    <main class="max-w-md mx-auto p-4 space-y-6">
+        
+        <!-- Welcome Banner -->
+        <div class="bg-gradient-to-r from-red-500 to-pink-500 rounded-2xl p-6 text-white shadow-md relative overflow-hidden">
+            <div class="relative z-10">
+                <h2 class="text-xl font-bold">Freshly Baked 🎁</h2>
+                <p class="text-sm opacity-90">Select your items and order via WhatsApp.</p>
+                <p class="text-[10px] mt-2 bg-white/20 inline-block px-2 py-1 rounded-lg">🛡️ No Advance Payment Required</p>
+            </div>
+            <div class="absolute -right-4 -bottom-4 opacity-20 text-6xl">🧁</div>
+        </div>
 
-  <div class="card">
-    <h3>Vanilla Birthday Cake</h3>
-    <p class="price">₹450</p>
-    <button class="order-btn" onclick="order('Vanilla Birthday Cake')">Order Now</button>
-  </div>
+        <!-- Trust Notice -->
+        <div class="flex items-center gap-3 bg-blue-50 p-3 rounded-xl border border-blue-100 dark:bg-blue-900/20 dark:border-blue-800">
+            <span class="text-xl">🛡️</span>
+            <div>
+                <p class="text-[11px] font-bold text-blue-700 dark:text-blue-300">Safe & Secure Ordering</p>
+                <p class="text-[10px] text-blue-600 dark:text-blue-400">Direct WhatsApp connection with the owner.</p>
+            </div>
+        </div>
 
-  <h2>💍 Wedding Cakes</h2>
-  <div class="card">
-    <h3>3 Tier Wedding Cake</h3>
-    <p class="price">₹3000</p>
-    <button class="order-btn" onclick="order('3 Tier Wedding Cake')">Order Now</button>
-  </div>
+        <!-- Menu Navigation -->
+        <div class="flex gap-2 overflow-x-auto pb-2 no-scrollbar">
+            <button onclick="filterMenu('all')" class="px-4 py-2 bg-[#e23744] text-white rounded-full text-sm font-bold shrink-0 shadow-md">All Items</button>
+            <button onclick="filterMenu('cakes')" class="px-4 py-2 bg-white border border-gray-200 rounded-full text-sm font-bold shrink-0">Cakes</button>
+            <button onclick="filterMenu('cupcakes')" class="px-4 py-2 bg-white border border-gray-200 rounded-full text-sm font-bold shrink-0">Cupcakes</button>
+            <button onclick="filterMenu('brownies')" class="px-4 py-2 bg-white border border-gray-200 rounded-full text-sm font-bold shrink-0">Brownies</button>
+        </div>
 
-  <h2>✨ Custom Cakes</h2>
-  <div class="card">
-    <h3>Photo Custom Cake</h3>
-    <p class="price">₹800</p>
-    <button class="order-btn" onclick="order('Photo Custom Cake')">Order Now</button>
-  </div>
-</div>
+        <!-- Item List -->
+        <div id="menuContainer" class="grid gap-4">
+            <!-- Items will be injected by JS -->
+        </div>
 
-<script>
-  // PWA Registration
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('service-worker.js');
-  }
+        <!-- Section: Custom -->
+        <section>
+            <h2 class="text-[10px] font-bold border-l-4 border-purple-500 pl-3 mb-4 text-purple-600 uppercase tracking-widest">✨ Custom Designs</h2>
+            <div class="cake-card bg-purple-50 dark:bg-purple-900/10 p-5 rounded-2xl border-2 border-dashed border-purple-200 dark:border-purple-800 text-center">
+                <p class="text-sm text-purple-700 dark:text-purple-300 font-medium mb-3">Looking for a specific theme or photo cake?</p>
+                <button onclick="openOrderModal('Custom Request', 'Quote Required')" class="px-6 py-2 bg-purple-600 text-white rounded-full font-bold shadow-sm active:scale-95 transition-all">Chat with Baker</button>
+            </div>
+        </section>
 
-  function order(cake) {
-    var name = prompt("Customer name:");
-    if (!name) return;
-    var phone = prompt("Phone number:");
-    if (!phone) return;
-    var date = prompt("Delivery date (DD/MM):");
-    if (!date) return;
+        <!-- About Section for Trust -->
+        <section class="bg-gray-100 dark:bg-gray-800/50 p-5 rounded-2xl text-center">
+            <h3 class="font-bold text-sm mb-1">About Our Kitchen</h3>
+            <p class="text-xs text-gray-500 dark:text-gray-400 italic">"I bake every order with the same love I have for my own family. All ingredients are fresh and premium."</p>
+            <p class="text-[10px] font-bold text-[#e23744] mt-3 tracking-widest">— Mom's Bakery Team</p>
+        </section>
 
-    var orders = JSON.parse(localStorage.getItem("orders")) || [];
-    orders.push({ cake: cake, name: name, phone: phone, date: date });
-    localStorage.setItem("orders", JSON.stringify(orders));
-    alert("Order saved successfully ✅");
-  }
+    </main>
 
-  function toggleDark() {
-    document.body.classList.toggle("dark");
-  }
+    <!-- Cart Overlay -->
+    <div id="cartPanel" class="fixed inset-y-0 right-0 w-80 bg-white z-[120] translate-x-full transition-transform duration-300 shadow-2xl p-6 flex flex-col dark:bg-[#1e1e1e]">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-xl font-bold">Your Selection</h2>
+            <button onclick="toggleCart()" class="text-2xl">&times;</button>
+        </div>
+        <div id="cartItems" class="flex-grow overflow-y-auto space-y-4">
+            <!-- Cart items here -->
+        </div>
+        <div class="pt-6 border-t mt-4 border-gray-100 dark:border-gray-800">
+            <div class="flex justify-between font-bold text-lg mb-4">
+                <span>Total:</span>
+                <span id="cartTotal">₹0</span>
+            </div>
+            <button onclick="openCheckout()" class="w-full bg-[#e23744] text-white py-4 rounded-2xl font-bold shadow-xl active:scale-95 transition-all">Proceed to WhatsApp</button>
+            <p class="text-[9px] text-center mt-3 text-gray-400 uppercase tracking-widest">🔐 Secure Connection</p>
+        </div>
+    </div>
 
-  function showAdmin() {
-    var password = prompt("Enter admin password:");
-    if (password !== "cake123") {
-      alert("Wrong password ❌");
-      return;
-    }
+    <!-- Modal Overlay -->
+    <div id="modalOverlay" class="fixed inset-0 bg-black/60 z-[130] hidden items-center justify-center p-4 backdrop-blur-sm">
+        <div id="modalContent" class="bg-white w-full max-w-sm rounded-3xl p-6 shadow-2xl modal-enter overflow-hidden relative dark:bg-[#1e1e1e]">
+            <!-- Order Form Injected via JS -->
+        </div>
+    </div>
 
-    var orders = JSON.parse(localStorage.getItem("orders")) || [];
-    if (orders.length === 0) {
-      alert("No orders yet");
-      return;
-    }
+    <!-- Admin Panel -->
+    <div id="adminPanel" class="fixed inset-0 bg-white z-[140] translate-y-full transition-transform duration-500 ease-out overflow-y-auto dark:bg-[#121212]">
+        <div class="p-5 border-b border-gray-100 dark:border-gray-800 flex justify-between items-center sticky top-0 bg-white dark:bg-[#121212] shadow-sm z-10">
+            <div>
+                <h2 class="font-bold text-xl">Bakery Orders</h2>
+                <p id="orderCount" class="text-xs text-gray-400">0 orders found</p>
+            </div>
+            <button onclick="closeAdmin()" class="bg-gray-100 dark:bg-gray-800 p-2 rounded-full h-10 w-10 flex items-center justify-center font-bold">&times;</button>
+        </div>
+        <div id="orderList" class="p-4 space-y-4 pb-24">
+            <!-- Orders List -->
+        </div>
+    </div>
 
-    var text = "📋 ALL ORDERS\n\n";
-    orders.forEach(function(o, i) {
-      text += (i + 1) + ". " + o.cake + "\n" +
-              "Name: " + o.name + " | Phone: " + o.phone + "\n" +
-              "Date: " + o.date + "\n\n";
-    });
-    alert(text);
-  }
-</script>
+    <!-- Global Scripts -->
+    <script>
+        // Business Logic
+        const OWNER_PHONE = "919876543210"; // REPLACE WITH THE MOTHER'S WHATSAPP NUMBER
 
+        const menuItems = [
+            { id: 1, name: 'Rich Chocolate', price: 500, cat: 'cakes', desc: 'Creamy Ganache & Dark Sponge' },
+            { id: 2, name: 'Vanilla Truffle', price: 450, cat: 'cakes', desc: 'Velvety Vanilla & White Choco' },
+            { id: 3, name: 'Red Velvet Cupcake', price: 60, cat: 'cupcakes', desc: 'Set of 1' },
+            { id: 4, name: 'Choco Lava Cupcake', price: 80, cat: 'cupcakes', desc: 'Molten Center' },
+            { id: 5, name: 'Walnut Brownie', price: 120, cat: 'brownies', desc: 'Fudgy & Nutty' }
+        ];
+
+        let cart = [];
+
+        function renderMenu(filter = 'all') {
+            const container = document.getElementById('menuContainer');
+            container.innerHTML = '';
+            const items = filter === 'all' ? menuItems : menuItems.filter(i => i.cat === filter);
+            
+            items.forEach(item => {
+                container.innerHTML += `
+                    <div class="cake-card bg-white dark:bg-gray-800/50 p-4 rounded-2xl shadow-sm border border-orange-100 dark:border-gray-800 flex justify-between items-center">
+                        <div>
+                            <h3 class="font-bold text-gray-800 dark:text-gray-100">${item.name}</h3>
+                            <p class="text-[10px] text-gray-500 uppercase tracking-tight">${item.desc}</p>
+                            <p class="text-[#e23744] font-bold mt-1">₹${item.price}</p>
+                        </div>
+                        <button onclick="addToCart(${item.id})" class="bg-red-50 dark:bg-red-900/20 text-[#e23744] px-4 py-2 rounded-xl font-bold text-sm hover:bg-[#e23744] hover:text-white transition-all">Add +</button>
+                    </div>
+                `;
+            });
+        }
+
+        function addToCart(id) {
+            const item = menuItems.find(i => i.id === id);
+            cart.push(item);
+            updateCartUI();
+            showToast(`${item.name} added to bag!`);
+        }
+
+        function updateCartUI() {
+            const list = document.getElementById('cartItems');
+            const count = document.getElementById('cartCount');
+            const total = document.getElementById('cartTotal');
+            
+            count.innerText = cart.length;
+            list.innerHTML = '';
+            let sum = 0;
+
+            cart.forEach((item, index) => {
+                sum += item.price;
+                list.innerHTML += `
+                    <div class="flex justify-between items-center bg-gray-50 dark:bg-white/5 p-3 rounded-xl border border-gray-100 dark:border-gray-800">
+                        <div>
+                            <p class="font-bold text-sm">${item.name}</p>
+                            <p class="text-xs text-gray-400">₹${item.price}</p>
+                        </div>
+                        <button onclick="removeFromCart(${index})" class="text-red-500 p-2">✕</button>
+                    </div>
+                `;
+            });
+            total.innerText = `₹${sum}`;
+        }
+
+        function removeFromCart(index) {
+            cart.splice(index, 1);
+            updateCartUI();
+        }
+
+        function toggleCart() {
+            document.getElementById('cartPanel').classList.toggle('translate-x-full');
+        }
+
+        function filterMenu(cat) {
+            renderMenu(cat);
+            const btns = document.querySelectorAll('.shrink-0');
+            btns.forEach(b => {
+                b.classList.remove('bg-[#e23744]', 'text-white', 'shadow-md');
+                b.classList.add('bg-white', 'text-gray-800', 'border-gray-200');
+            });
+            event.target.classList.add('bg-[#e23744]', 'text-white', 'shadow-md');
+        }
+
+        function openCheckout() {
+            if (cart.length === 0) return showToast("Your bag is empty!");
+            toggleCart();
+            openOrderModal('Multiple Items', document.getElementById('cartTotal').innerText);
+        }
+
+        function toggleTheme() {
+            const body = document.body;
+            const btn = document.getElementById('themeBtn');
+            body.classList.toggle('dark-mode');
+            btn.innerText = body.classList.contains('dark-mode') ? '☀️' : '🌙';
+        }
+
+        function closeAdmin() { document.getElementById('adminPanel').classList.add('translate-y-full'); }
+        function closeModal() { document.getElementById('modalOverlay').classList.add('hidden'); document.getElementById('modalOverlay').classList.remove('flex'); }
+
+        function showToast(msg) {
+            const toast = document.createElement('div');
+            toast.className = "fixed bottom-24 left-1/2 -translate-x-1/2 bg-gray-900 text-white px-6 py-3 rounded-full shadow-2xl z-[200] modal-enter text-xs font-medium border border-gray-700";
+            toast.innerText = msg;
+            document.body.appendChild(toast);
+            setTimeout(() => { toast.style.opacity = '0'; setTimeout(() => toast.remove(), 500); }, 2000);
+        }
+
+        window.onload = () => renderMenu();
+    </script>
+
+    <!-- Firebase Script -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged, signInWithCustomToken } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, collection, addDoc, onSnapshot, serverTimestamp, deleteDoc, doc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        let db, auth;
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'cake-shop-001';
+        
+        if (typeof __firebase_config !== 'undefined') {
+            const firebaseConfig = JSON.parse(__firebase_config);
+            const app = initializeApp(firebaseConfig);
+            auth = getAuth(app);
+            db = getFirestore(app);
+
+            const initAuth = async () => {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+            };
+            initAuth();
+            onAuthStateChanged(auth, (user) => { if (user) listenToOrders(); });
+        }
+
+        window.openOrderModal = (cakeName, price) => {
+            const overlay = document.getElementById('modalOverlay');
+            const content = document.getElementById('modalContent');
+            
+            content.innerHTML = `
+                <div class="mb-4">
+                    <h3 class="text-xl font-bold">Secure Checkout</h3>
+                    <p class="text-xs opacity-60">Complete your details to finish on WhatsApp</p>
+                </div>
+                <div class="space-y-4">
+                    <input type="text" id="custName" class="w-full bg-gray-50 dark:bg-white/5 p-4 rounded-xl outline-none border border-gray-100 dark:border-gray-800" placeholder="Your Full Name">
+                    <input type="tel" id="custPhone" class="w-full bg-gray-50 dark:bg-white/5 p-4 rounded-xl outline-none border border-gray-100 dark:border-gray-800" placeholder="WhatsApp Number">
+                    <div class="relative">
+                        <label class="text-[9px] font-bold uppercase opacity-50 ml-1">Needed By Date</label>
+                        <input type="date" id="custDate" class="w-full bg-gray-50 dark:bg-white/5 p-4 rounded-xl outline-none border border-gray-100 dark:border-gray-800">
+                    </div>
+                </div>
+                <div class="flex gap-4 mt-8">
+                    <button onclick="closeModal()" class="flex-1 font-semibold opacity-50 text-sm">Cancel</button>
+                    <button id="confirmOrderBtn" class="flex-[2] py-4 bg-[#e23744] text-white rounded-2xl font-bold shadow-lg">Submit & Chat</button>
+                </div>
+                <p class="text-[8px] text-center mt-4 text-gray-400">🛡️ This sends a message to the Baker's WhatsApp. Payment is discussed privately.</p>
+            `;
+            
+            overlay.classList.remove('hidden');
+            overlay.classList.add('flex');
+            document.getElementById('confirmOrderBtn').onclick = () => submitOrder(cakeName, price);
+        };
+
+        const submitOrder = async (cake, price) => {
+            const name = document.getElementById('custName').value.trim();
+            const phone = document.getElementById('custPhone').value.trim();
+            const date = document.getElementById('custDate').value;
+
+            if (!name || !phone || !date) return showToast("Please fill all details!");
+
+            let orderItemsText = cake === 'Multiple Items' ? cart.map(i => `- ${i.name} (₹${i.price})`).join('\n') : `- ${cake} (₹${price})`;
+
+            const whatsappMsg = `*Hello Mom's Bakery!*\n\nI want to place an order from your website.\n\n*Name:* ${name}\n*Phone:* ${phone}\n*Needed By:* ${date}\n\n*Items:*\n${orderItemsText}\n\n*Total:* ${price}\n\nPlease confirm my order!`;
+            
+            try {
+                if (db && auth.currentUser) {
+                    await addDoc(collection(db, 'artifacts', appId, 'public', 'data', 'orders'), {
+                        items: cake === 'Multiple Items' ? cart : [{name: cake, price}],
+                        total: price,
+                        customerName: name,
+                        phone: phone,
+                        deliveryDate: date,
+                        createdAt: serverTimestamp(),
+                        status: 'New Request'
+                    });
+                }
+
+                const waUrl = `https://wa.me/${OWNER_PHONE}?text=${encodeURIComponent(whatsappMsg)}`;
+                window.open(waUrl, '_blank');
+                
+                cart = [];
+                updateCartUI();
+                closeModal();
+                showToast("Sending to WhatsApp...");
+            } catch (e) { showToast("Connection error!"); }
+        };
+
+        window.openAdminModal = () => {
+            const pass = prompt("Enter Admin PIN:");
+            if (pass === "cake123") document.getElementById('adminPanel').classList.remove('translate-y-full');
+            else if (pass !== null) showToast("Access Denied");
+        };
+
+        const listenToOrders = () => {
+            if (!db) return;
+            onSnapshot(collection(db, 'artifacts', appId, 'public', 'data', 'orders'), (snapshot) => {
+                const list = document.getElementById('orderList');
+                document.getElementById('orderCount').innerText = `${snapshot.size} records in database`;
+                let html = '';
+                snapshot.forEach(docSnap => {
+                    const data = docSnap.data();
+                    html += `
+                        <div class="bg-gray-50 dark:bg-white/5 p-4 rounded-2xl border border-gray-100 dark:border-gray-800 flex justify-between items-center">
+                            <div>
+                                <h4 class="font-bold text-sm">${data.customerName}</h4>
+                                <p class="text-[10px] opacity-60">${data.total} • Due: ${data.deliveryDate}</p>
+                                <span class="text-[9px] text-[#e23744] font-bold uppercase tracking-widest">${data.status}</span>
+                            </div>
+                            <button onclick="deleteOrder('${docSnap.id}')" class="p-3 text-gray-300">🗑️</button>
+                        </div>
+                    `;
+                });
+                list.innerHTML = html || `<div class="text-center py-20 text-gray-300 text-sm">No orders yet.</div>`;
+            });
+        };
+
+        window.deleteOrder = async (id) => {
+            if (confirm("Remove order from history?") && db) {
+                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'orders', id));
+                showToast("Record Deleted");
+            }
+        };
+    </script>
 </body>
 </html>
