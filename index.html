@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Orikek - A Daily Celebration</title>
     
     <!-- PWA / INSTALLABLE APP TAGS -->
@@ -57,6 +57,8 @@
         header {
             background-color: var(--brand-brown);
             padding: 15px 20px;
+            /* Added top padding for notch safety on iOS */
+            padding-top: calc(15px + env(safe-area-inset-top));
             text-align: center;
             border-bottom: 1px solid rgba(255,255,255,0.1);
             flex-shrink: 0;
@@ -93,7 +95,7 @@
             flex: 1;
             overflow-y: auto;
             padding: 16px;
-            padding-bottom: 100px;
+            padding-bottom: 120px;
             position: relative;
             z-index: 5;
             -webkit-overflow-scrolling: touch;
@@ -171,7 +173,8 @@
             display: flex;
             justify-content: space-around;
             padding: 10px 0;
-            padding-bottom: env(safe-area-inset-bottom, 10px);
+            /* Added safe area inset for modern phone home bars */
+            padding-bottom: calc(10px + env(safe-area-inset-bottom, 10px));
             border-top: 1px solid rgba(255,255,255,0.1);
             backdrop-filter: blur(15px);
             z-index: 20;
@@ -238,7 +241,7 @@
             flex: 1;
             overflow-y: auto;
             padding: 20px;
-            padding-bottom: 40px;
+            padding-bottom: calc(40px + env(safe-area-inset-bottom));
         }
 
         .form-input, .form-textarea {
@@ -338,7 +341,7 @@
         </nav>
 
         <div id="checkout-overlay">
-            <div style="padding: 20px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1);">
+            <div style="padding: 20px; padding-top: calc(20px + env(safe-area-inset-top)); display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1);">
                 <h2 style="font-size:20px; font-weight:bold; margin:0;">Cart Summary</h2>
                 <button onclick="closeCheckout()" style="background:none; border:none; color:white; font-size:32px;">&times;</button>
             </div>
@@ -351,11 +354,11 @@
                 <div class="space-y-4">
                     <div>
                         <label style="font-size:11px; color:var(--brand-gold); font-weight:bold; display:block; margin-bottom:5px;">FULL NAME</label>
-                        <input type="text" id="c-name" class="form-input" placeholder="Enter your name" onchange="saveDetails()">
+                        <input type="text" id="c-name" class="form-input" placeholder="Enter your name" autocomplete="name" onchange="saveDetails()">
                     </div>
                     <div>
                         <label style="font-size:11px; color:var(--brand-gold); font-weight:bold; display:block; margin-bottom:5px;">CONTACT NUMBER</label>
-                        <input type="tel" id="c-phone" class="form-input" placeholder="Mobile number" onchange="saveDetails()">
+                        <input type="tel" id="c-phone" class="form-input" placeholder="Mobile number" autocomplete="tel" onchange="saveDetails()">
                     </div>
                     <div class="flex gap-4">
                         <div class="flex-1">
@@ -388,7 +391,7 @@
                     </div>
                     <div>
                         <label style="font-size:11px; color:var(--brand-gold); font-weight:bold; display:block; margin-bottom:5px;">FULL ADDRESS</label>
-                        <textarea id="c-addr" class="form-textarea" rows="3" placeholder="Flat, Building, Area..." onchange="saveDetails()"></textarea>
+                        <textarea id="c-addr" class="form-textarea" rows="3" placeholder="Flat, Building, Area..." autocomplete="street-address" onchange="saveDetails()"></textarea>
                     </div>
                 </div>
 
@@ -401,7 +404,6 @@
     <script>
         const OWNER_PHONE = "917977313279";
         
-        // Removed Red Velvet Jar from the menu array
         const menu = [
             { id: 1, name: "Belgian Chocolate", desc: "Premium Dark Ganache", price: 550, img: "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=300&h=300&fit=crop" },
             { id: 2, name: "Strawberry Bliss", desc: "Fresh Farm Strawberries", price: 600, img: "https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=300&h=300&fit=crop" },
