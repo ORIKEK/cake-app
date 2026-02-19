@@ -12,9 +12,6 @@
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="theme-color" content="#4d1d0c">
 
-    <!-- MANIFEST FOR INSTALLATION -->
-    <link rel="manifest" href="data:application/json;base64,ewogICJuYW1lIjogIk9yaWtlayIsCiAgInNob3J0X25hbWUiIjogIk9yaWtlayIsCiAgInN0YXJ0X3VybCI6ICIuIiwKICAiZGlzcGxheSI6ICJzdGFuZGFsb25lIiwKICAiYmFja2dyb3VuZF9jb2xvciI6ICIjNGQxZDBjIiwKICAidGhlbWVfY29sb3IiIjogIiM0ZDFkMGMiLAogICJpY29ucyI6IFsKICAgIHsKICAgICAgInNyYyI6ICJodHRwczovL2Nkbi1pY29ucy1wbmcuZnJlZXBpay5jb20vNTEyLzI2ODIvMjY4MjQ1OC5wbmciLAogICAgICAic2l6ZXMiIjogIjUxMng1MTIiLAogICAgICAidHlwZSI6ICJpbWFnZS9wbmciCiAgICB9CiAgXQp9">
-
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* CORE STYLES */
@@ -119,7 +116,6 @@
             padding: 16px;
             text-align: center;
             margin-bottom: 24px;
-            display: none; /* Hidden by default until prompt is ready */
         }
 
         .menu-card {
@@ -296,7 +292,7 @@
                 <div id="home-install-card" class="install-prompt-card">
                     <div style="font-size: 14px; font-weight: bold; color: var(--brand-gold); margin-bottom: 4px;">Save Orikek App</div>
                     <div style="font-size: 11px; margin-bottom: 12px; opacity: 0.8;">Get instant access to our daily menu!</div>
-                    <button id="install-btn" onclick="handleInstallClick()" style="background: var(--brand-gold); color: var(--brand-brown); padding: 8px 20px; border-radius: 20px; font-weight: 900; border: none; font-size: 11px;">INSTALL NOW</button>
+                    <button onclick="handleInstallClick()" style="background: var(--brand-gold); color: var(--brand-brown); padding: 8px 20px; border-radius: 20px; font-weight: 900; border: none; font-size: 11px;">INSTALL NOW</button>
                 </div>
 
                 <h3 style="font-size:18px; font-weight:bold; margin-bottom:15px; border-left:4px solid var(--brand-gold); padding-left:10px;">Gourmet Menu</h3>
@@ -402,22 +398,10 @@
 
     </div>
 
-    <!-- SERVICE WORKER REGISTRATION (REQUIRED FOR INSTALLATION) -->
-    <script>
-        if ('serviceWorker' in navigator) {
-            const swCode = `
-                self.addEventListener('install', (e) => self.skipWaiting());
-                self.addEventListener('fetch', (e) => e.respondWith(fetch(e.request)));
-            `;
-            const blob = new Blob([swCode], { type: 'text/javascript' });
-            const url = URL.createObjectURL(blob);
-            navigator.serviceWorker.register(url);
-        }
-    </script>
-
     <script>
         const OWNER_PHONE = "917977313279";
         
+        // Removed Red Velvet Jar from the menu array
         const menu = [
             { id: 1, name: "Belgian Chocolate", desc: "Premium Dark Ganache", price: 550, img: "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=300&h=300&fit=crop" },
             { id: 2, name: "Strawberry Bliss", desc: "Fresh Farm Strawberries", price: 600, img: "https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=300&h=300&fit=crop" },
@@ -430,42 +414,20 @@
         let diet = "100% EGGLESS";
         let deferredPrompt;
 
-        // INSTALLATION LOGIC
         window.addEventListener('beforeinstallprompt', (e) => {
-            // Prevent the mini-infobar from appearing on mobile
             e.preventDefault();
-            // Stash the event so it can be triggered later.
             deferredPrompt = e;
-            // Update UI notify the user they can install the PWA
             document.getElementById('home-install-card').style.display = 'block';
         });
 
-        async function handleInstallClick() {
+        function handleInstallClick() {
             if (deferredPrompt) {
-                // Show the install prompt
                 deferredPrompt.prompt();
-                // Wait for the user to respond to the prompt
-                const { outcome } = await deferredPrompt.userChoice;
-                if (outcome === 'accepted') {
-                    console.log('User accepted the install prompt');
-                    document.getElementById('home-install-card').style.display = 'none';
-                }
                 deferredPrompt = null;
             } else {
-                // If the prompt isn't available, give the user manual instructions
-                const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-                if (isIOS) {
-                    alert("To install Orikek on iPhone:\n\n1. Tap the Share button (square with arrow)\n2. Scroll down and tap 'Add to Home Screen' 🎂");
-                } else {
-                    alert("Installation Tip: \n\n Tap your browser's menu (⋮) and select 'Install App' or 'Add to Home Screen' for the full Orikek experience! 🎂");
-                }
+                alert("Installation Tip: \n\n Tap your browser's menu (⋮) or share icon and select 'Add to Home Screen' for the full Orikek experience! 🎂");
             }
         }
-
-        window.addEventListener('appinstalled', (evt) => {
-            // Log install to analytics or hide UI
-            document.getElementById('home-install-card').style.display = 'none';
-        });
 
         window.onload = function() {
             if(localStorage.getItem('orikek_name')) document.getElementById('c-name').value = localStorage.getItem('orikek_name');
@@ -561,7 +523,7 @@
             html += `<div style="margin-top:12px; padding-top:12px; border-top:1px solid rgba(255,255,255,0.2); display:flex; justify-content:space-between; font-weight:900; font-size:16px; color:var(--brand-gold);">
                         <span>Total (${weight}kg):</span>
                         <span>₹${finalPrice}</span>
-                      </div>`;
+                     </div>`;
             
             document.getElementById('cart-summary').innerHTML = html;
             document.getElementById('cart-summary').dataset.total = finalPrice;
