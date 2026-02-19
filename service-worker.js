@@ -1,7 +1,8 @@
-self.addEventListener('install', function(e) {
-  e.waitUntil(
-    caches.open('cake-app').then(function(cache) {
-      return cache.addAll(['index.html']);
-    })
-  );
+self.addEventListener('install', (event) => {
+  console.log('Orikek Service Worker installed');
+});
+
+self.addEventListener('fetch', (event) => {
+  // This is a basic pass-through to satisfy PWA requirements
+  event.respondWith(fetch(event.request));
 });
