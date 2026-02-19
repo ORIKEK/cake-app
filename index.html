@@ -37,7 +37,7 @@
         /* RESPONSIVE CONTAINER - Fixed width for desktop, full for mobile */
         #app-container {
             width: 100%;
-            max-width: 500px; /* Slight increase for desktop comfort */
+            max-width: 500px; 
             background-color: var(--brand-brown);
             background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Ctext x='20' y='40' fill='%23000' font-size='15' opacity='0.05'%3E🍰 %3C/text%3E%3Ctext x='70' y='90' fill='%23000' font-size='12' opacity='0.05'%3E🧁 %3C/text%3E%3C/svg%3E");
             height: 100%;
@@ -47,7 +47,6 @@
             box-shadow: 0 0 50px rgba(0,0,0,0.8);
         }
 
-        /* Native Feel: Remove boundaries on mobile */
         @media (max-width: 500px) {
             #app-container {
                 max-width: 100%;
@@ -119,7 +118,6 @@
             margin-bottom: 24px;
         }
 
-        /* MENU CARDS WITH IMAGES */
         .menu-card {
             background: white;
             color: #4d1d0c;
@@ -224,7 +222,6 @@
             border: 2px solid white;
         }
 
-        /* OVERLAYS */
         #checkout-overlay {
             position: absolute;
             top: 0;
@@ -251,7 +248,7 @@
             color: white;
             padding: 12px;
             border-radius: 10px;
-            font-size: 16px; /* Prevents iOS zoom on focus */
+            font-size: 16px;
         }
 
         .toggle-opt.selected {
@@ -404,12 +401,11 @@
     <script>
         const OWNER_PHONE = "917977313279";
         
-        // Added 'img' property to menu items
+        // Removed Red Velvet Jar from the menu array
         const menu = [
             { id: 1, name: "Belgian Chocolate", desc: "Premium Dark Ganache", price: 550, img: "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=300&h=300&fit=crop" },
             { id: 2, name: "Strawberry Bliss", desc: "Fresh Farm Strawberries", price: 600, img: "https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=300&h=300&fit=crop" },
             { id: 3, name: "Lotus Biscoff", desc: "Creamy Biscoff Spread", price: 750, img: "https://images.unsplash.com/photo-1535141192574-5d4897c12636?w=300&h=300&fit=crop" },
-            { id: 4, name: "Red Velvet Jar", desc: "Signature Cream Cheese", price: 150, img: "https://images.unsplash.com/photo-1586788680434-30d324671ff6?w=300&h=300&fit=crop" },
             { id: 5, name: "Nutella Brownie", desc: "Hazelnut Goodness", price: 180, img: "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=300&h=300&fit=crop" }
         ];
 
@@ -418,7 +414,6 @@
         let diet = "100% EGGLESS";
         let deferredPrompt;
 
-        // PWA Install Logic
         window.addEventListener('beforeinstallprompt', (e) => {
             e.preventDefault();
             deferredPrompt = e;
@@ -435,7 +430,6 @@
         }
 
         window.onload = function() {
-            // Load saved data
             if(localStorage.getItem('orikek_name')) document.getElementById('c-name').value = localStorage.getItem('orikek_name');
             if(localStorage.getItem('orikek_phone')) document.getElementById('c-phone').value = localStorage.getItem('orikek_phone');
             if(localStorage.getItem('orikek_addr')) document.getElementById('c-addr').value = localStorage.getItem('orikek_addr');
@@ -525,7 +519,6 @@
                 </div>`;
             });
             
-            // Simplified pricing logic based on base 0.5kg price
             let finalPrice = (total / 0.5) * weight;
             html += `<div style="margin-top:12px; padding-top:12px; border-top:1px solid rgba(255,255,255,0.2); display:flex; justify-content:space-between; font-weight:900; font-size:16px; color:var(--brand-gold);">
                         <span>Total (${weight}kg):</span>
@@ -579,7 +572,6 @@
             document.getElementById('nav-profile').classList.remove('active');
             document.getElementById('nav-' + view).classList.add('active');
             
-            // Smooth scroll back to top when switching
             document.getElementById('content-area').scrollTop = 0;
         }
     </script>
