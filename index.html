@@ -8,21 +8,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Orikek - A Daily Celebration</title>
-    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests; frame-ancestors 'none';">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         :root {
             --brand-brown: #4d1d0c;
             --brand-gold: #be9b7b;
-            --bg-dark: #2a150d;
-            --card-white: #ffffff;
+            --bg-dark: #1a0d08;
         }
+        
         body {
             font-family: 'Inter', sans-serif;
             background-color: var(--bg-dark);
-            background-image: url("data:image/svg+xml,%3Csvg width='160' height='160' viewBox='0 0 160 160' xmlns='http://www.w3.org/2000/svg'%3E%3Ctext x='10' y='30' fill='%234d1d0c' font-size='22' opacity='0.2'%3E🍰 %3C/text%3E%3Ctext x='100' y='35' fill='%234d1d0c' font-size='18' opacity='0.2'%3E🥐 %3C/text%3E%3C/svg%3E");
             color: white;
             margin: 0;
             height: 100dvh;
@@ -30,6 +27,7 @@
             display: flex;
             justify-content: center;
         }
+
         #app-container {
             width: 100%;
             max-width: 500px;
@@ -37,267 +35,294 @@
             position: relative;
             display: flex;
             flex-direction: column;
-            box-shadow: 0 0 60px rgba(0,0,0,0.5);
+            overflow: hidden;
+            box-shadow: 0 0 100px rgba(0,0,0,0.8);
         }
+
         header {
-            background: rgba(77, 29, 12, 0.9);
-            backdrop-filter: blur(10px);
-            padding: 15px 20px;
-            padding-top: calc(15px + env(safe-area-inset-top));
-            text-align: center;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-            z-index: 30;
+            background: rgba(77, 29, 12, 0.7);
+            backdrop-filter: blur(15px);
+            -webkit-backdrop-filter: blur(15px);
+            padding: 20px;
+            padding-top: calc(20px + env(safe-area-inset-top));
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            z-index: 100;
         }
-        .brand-title { font-size: 26px; font-weight: 900; color: white; }
-        .brand-subtitle { font-size: 11px; color: var(--brand-gold); font-style: italic; }
-        
+
+        .brand-title { font-size: 28px; font-weight: 900; letter-spacing: -1px; }
+
         #content-area {
             flex: 1;
             overflow-y: auto;
-            padding: 16px;
-            padding-bottom: calc(100px + env(safe-area-inset-bottom));
-            -webkit-overflow-scrolling: touch;
+            padding-bottom: 120px;
+            scrollbar-width: none;
         }
+        #content-area::-webkit-scrollbar { display: none; }
+
+        .trending-slider {
+            display: flex; gap: 15px; overflow-x: auto;
+            padding: 10px 20px 20px 20px; scrollbar-width: none;
+        }
+        .trending-slider::-webkit-scrollbar { display: none; }
+        
+        .trending-card {
+            min-width: 140px; height: 180px;
+            background-size: cover; background-position: center;
+            border-radius: 20px; position: relative;
+            display: flex; flex-direction: column; justify-content: flex-end;
+            padding: 12px; border: 1px solid rgba(255,255,255,0.1);
+        }
+
         .menu-card {
-            background: var(--card-white);
-            color: #4d1d0c;
-            border-radius: 18px;
-            margin-bottom: 16px;
-            display: flex;
-            height: 110px;
-            overflow: hidden;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 24px; margin-bottom: 16px;
+            display: flex; padding: 12px; gap: 15px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .menu-img { width: 110px; height: 110px; object-fit: cover; }
-        .menu-info { flex: 1; padding: 12px; display: flex; flex-direction: column; justify-content: space-between; }
-        
+        .menu-card:active { transform: scale(0.96); background: rgba(255,255,255,0.08); }
+
+        .menu-img { 
+            width: 90px; height: 90px; border-radius: 18px; 
+            object-fit: cover; box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+        }
+
+        .chip {
+            padding: 8px 18px; background: rgba(255,255,255,0.05);
+            border-radius: 12px; font-size: 12px; font-weight: 600;
+            transition: 0.3s; white-space: nowrap;
+        }
+        .chip.active { background: var(--brand-gold); color: var(--brand-brown); }
+
         .add-btn {
-            background: var(--brand-brown);
-            color: white;
-            padding: 6px 14px;
-            border-radius: 20px;
-            font-weight: 800;
-            font-size: 11px;
+            background: #fff; color: var(--brand-brown);
+            width: 32px; height: 32px; border-radius: 10px;
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 900; transition: 0.2s;
         }
-        
+
         nav {
-            position: absolute;
-            bottom: 0;
-            width: 100%;
-            background: rgba(42, 21, 13, 0.95);
-            display: flex;
-            justify-content: space-around;
-            padding-bottom: env(safe-area-inset-bottom);
-            border-top: 1px solid rgba(255,255,255,0.1);
-            z-index: 40;
-        }
-        .nav-item { padding: 12px; opacity: 0.5; text-align: center; transition: 0.3s; }
-        .nav-item.active { opacity: 1; color: var(--brand-gold); }
-
-        /* Toast Notification */
-        #toast {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: var(--brand-gold);
-            color: var(--brand-brown);
-            padding: 10px 20px;
-            border-radius: 50px;
-            font-weight: 900;
-            display: none;
-            z-index: 200;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            background: rgba(26, 13, 8, 0.9);
+            backdrop-filter: blur(20px);
+            height: 85px; border-top: 1px solid rgba(255,255,255,0.1);
+            z-index: 100;
         }
 
-        /* Responsive Improvements */
-        .form-input { width: 100%; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 10px; padding: 12px; color: white; }
-        .selected { background: var(--brand-gold) !important; color: var(--brand-brown) !important; }
+        .form-input { 
+            width: 100%; background: rgba(255,255,255,0.05); 
+            border: 1px solid rgba(255,255,255,0.1); 
+            border-radius: 15px; padding: 15px; color: white; outline: none;
+        }
+
+        .pulse-orange { animation: pulse 2s infinite; }
+        @keyframes pulse {
+            0% { transform: scale(0.95); opacity: 0.5; }
+            50% { transform: scale(1); opacity: 1; }
+            100% { transform: scale(0.95); opacity: 0.5; }
+        }
+
+        select.form-input option {
+            background-color: var(--brand-brown);
+            color: white;
+        }
     </style>
 </head>
 <body>
-    <div id="toast">Added to Cart! 🍰</div>
+    <div id="toast" class="fixed top-10 left-1/2 -translate-x-1/2 bg-white text-black px-6 py-3 rounded-full font-bold shadow-2xl z-[500] hidden">
+        Added to Box! 🍰
+    </div>
 
     <div id="app-container">
-        <header>
-            <div class="brand-title">🍰 Orikek</div>
-            <div class="brand-subtitle">a daily celebration...</div>
+        <header id="main-header">
+            <div class="brand-title text-amber-50">Orikek</div>
+            <div class="brand-subtitle opacity-60 text-[10px] uppercase tracking-[3px] font-bold">A Daily Celebration</div>
         </header>
 
         <div id="content-area">
             <div id="view-home">
-                <div class="bg-amber-200 text-amber-900 p-3 rounded-xl mb-6 text-center shadow-lg">
-                    <p class="text-[10px] font-black uppercase tracking-widest">Order Policy</p>
-                    <p class="font-bold">PRE-ORDER 24 HOURS IN ADVANCE</p>
+                <div class="px-5 py-4">
+                    <div class="relative">
+                        <input type="text" id="menuSearch" oninput="filterMenu()" placeholder="Search treats..." class="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-12 outline-none focus:border-amber-500/50">
+                        <span class="absolute left-4 top-4 opacity-40">🔍</span>
+                    </div>
                 </div>
 
-                <div id="home-install-card" class="hidden bg-white/5 border border-amber-500/30 p-4 rounded-2xl mb-6 text-center">
-                    <p class="text-amber-400 font-bold">Install Orikek App</p>
-                    <button onclick="handleInstallClick()" class="mt-2 bg-amber-500 text-amber-950 px-4 py-2 rounded-full font-black text-xs">INSTALL</button>
+                <div class="mb-4">
+                    <p class="px-5 text-[10px] font-black uppercase tracking-widest text-amber-500 mb-3">Trending Now</p>
+                    <div class="trending-slider" id="trending-list"></div>
                 </div>
 
-                <h3 class="text-lg font-black mb-4 border-l-4 border-amber-500 pl-3">Gourmet Menu</h3>
-                <div id="menu-list"></div>
+                <div class="flex gap-3 overflow-x-auto px-5 mb-6 no-scrollbar">
+                    <button class="chip active" onclick="filterCategory('All', this)">All</button>
+                    <button class="chip" onclick="filterCategory('Cakes', this)">Cakes</button>
+                    <button class="chip" onclick="filterCategory('Desserts', this)">Desserts</button>
+                </div>
+
+                <div id="menu-list" class="px-5"></div>
             </div>
 
-            <div id="view-profile" class="hidden text-center pt-10">
-                <div class="text-6xl mb-4">👤</div>
+            <div id="view-profile" class="hidden px-8 pt-10 text-center">
+                <div class="w-24 h-24 bg-white/5 rounded-full flex items-center justify-center mx-auto mb-4 border border-white/10">
+                    <span class="text-4xl">👤</span>
+                </div>
                 <h2 class="text-2xl font-black">Orikek Member</h2>
-                <div class="mt-10 p-10 bg-white/5 rounded-3xl border border-white/10">
-                    <p class="opacity-50">No active orders found.</p>
+                <p class="opacity-50 text-sm">Welcome back to your sweet spot!</p>
+
+                <div class="mt-10 p-6 bg-white/5 rounded-[30px] border border-white/10 text-left">
+                    <p class="text-[10px] font-black uppercase text-amber-500 mb-4 tracking-tighter">Current Status</p>
+                    <div class="flex items-center gap-4">
+                        <div class="w-3 h-3 bg-orange-500 rounded-full pulse-orange"></div>
+                        <div>
+                            <p class="font-bold">Order Preparation</p>
+                            <p class="text-xs opacity-50">Chef is working on your magic...</p>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <nav>
-            <button class="nav-item active" id="nav-home" onclick="showView('home')">
-                <div class="text-xl">📜</div><span class="text-[10px] font-bold">MENU</span>
-            </button>
-            <div class="relative -top-6">
-                <button class="w-16 h-16 bg-white rounded-full shadow-2xl flex items-center justify-center text-2xl border-4 border-[#2a150d]" onclick="openCheckout()">
-                    🛒
-                    <div id="cart-badge" class="absolute -top-1 -right-1 bg-red-500 text-white text-[10px] w-6 h-6 rounded-full hidden items-center justify-center border-2 border-white font-black">0</div>
-                </button>
+        <div id="checkout-overlay" class="fixed inset-0 bg-[#1a0d08] z-[200] hidden flex-col">
+            <div class="p-6 border-b border-white/10 flex justify-between items-center">
+                <h2 class="text-2xl font-black">Your Box</h2>
+                <button onclick="closeCheckout()" class="text-4xl">&times;</button>
             </div>
-            <button class="nav-item" id="nav-profile" onclick="showView('profile')">
-                <div class="text-xl">👤</div><span class="text-[10px] font-bold">PROFILE</span>
-            </button>
-        </nav>
-
-        <div id="checkout-overlay" class="fixed inset-0 bg-[#4d1d0c] z-[100] hidden flex-col animate-slide-up">
-            <div class="p-5 border-b border-white/10 flex justify-between items-center">
-                <h2 class="text-xl font-black">Review Order</h2>
-                <button onclick="closeCheckout()" class="text-3xl">&times;</button>
-            </div>
-            <div class="flex-1 overflow-y-auto p-5">
-                <div id="cart-summary" class="bg-white/5 p-4 rounded-2xl mb-6"></div>
+            <div class="flex-1 overflow-y-auto p-6">
+                <div id="cart-items" class="space-y-2 mb-8"></div>
                 
                 <div class="space-y-4">
+                    <p class="text-[10px] font-black uppercase text-amber-500 tracking-widest">Personal Details</p>
                     <input type="text" id="c-name" placeholder="Full Name" class="form-input">
                     <input type="tel" id="c-phone" placeholder="WhatsApp Number" class="form-input">
-                    <div class="flex gap-2">
-                        <input type="date" id="c-date" class="form-input">
-                        <input type="time" id="c-time" class="form-input">
-                    </div>
                     
-                    <p class="text-[10px] font-black text-amber-500 uppercase">Weight</p>
+                    <p class="text-[10px] font-black uppercase text-amber-500 tracking-widest mt-4">Cake Preference</p>
+                    <select id="c-pref" class="form-input">
+                        <option value="Egg">With Egg</option>
+                        <option value="Eggless">100% Eggless</option>
+                    </select>
+
+                    <p class="text-[10px] font-black uppercase text-amber-500 tracking-widest mt-4">Message on Cake</p>
+                    <input type="text" id="c-msg" placeholder="Example: Happy B'day Arjun (Optional)" class="form-input">
+
+                    <p class="text-[10px] font-black uppercase text-amber-500 tracking-widest mt-4">Delivery Schedule</p>
                     <div class="flex gap-2">
-                        <button class="weight-opt flex-1 p-3 bg-white/5 rounded-xl text-xs font-bold selected" onclick="setWeight(0.5, this)">0.5 KG</button>
-                        <button class="weight-opt flex-1 p-3 bg-white/5 rounded-xl text-xs font-bold" onclick="setWeight(1, this)">1.0 KG</button>
-                        <button class="weight-opt flex-1 p-3 bg-white/5 rounded-xl text-xs font-bold" onclick="setWeight(2, this)">2.0 KG</button>
+                        <input type="date" id="c-date" class="form-input flex-1">
+                        <input type="time" id="c-time" class="form-input flex-1">
                     </div>
 
-                    <p class="text-[10px] font-black text-amber-500 uppercase">Preference</p>
-                    <div class="flex gap-2">
-                        <button class="diet-opt flex-1 p-3 bg-white/5 rounded-xl text-xs font-bold selected" onclick="setDiet('EGGLESS', this)">🌱 EGGLESS</button>
-                        <button class="diet-opt flex-1 p-3 bg-white/5 rounded-xl text-xs font-bold" onclick="setDiet('WITH EGG', this)">🥚 WITH EGG</button>
-                    </div>
-
-                    <textarea id="c-addr" placeholder="Delivery Address" rows="3" class="form-input"></textarea>
+                    <textarea id="c-addr" placeholder="Full Delivery Address" rows="3" class="form-input"></textarea>
                 </div>
 
-                <button onclick="sendOrder()" class="w-full bg-green-500 py-4 rounded-2xl font-black mt-8 shadow-xl">CONFIRM VIA WHATSAPP</button>
+                <button onclick="sendOrder()" class="w-full bg-green-500 py-5 rounded-2xl font-black mt-8 text-black shadow-2xl">ORDER ON WHATSAPP</button>
             </div>
         </div>
+
+        <nav class="fixed bottom-0 w-full max-w-[500px] flex justify-around items-center px-6">
+            <button onclick="showView('home')" id="btn-home" class="flex flex-col items-center gap-1">
+                <span class="text-2xl">🏠</span>
+                <span class="text-[9px] font-black uppercase">Menu</span>
+            </button>
+            
+            <button onclick="openCheckout()" class="relative -top-8 w-16 h-16 bg-white rounded-2xl shadow-2xl flex items-center justify-center text-2xl active:scale-90 transition-transform">
+                🛒
+                <div id="cart-badge" class="absolute -top-2 -right-2 bg-red-500 text-white text-[10px] w-6 h-6 rounded-full hidden items-center justify-center border-4 border-[#1a0d08] font-black">0</div>
+            </button>
+
+            <button onclick="showView('profile')" id="btn-profile" class="flex flex-col items-center gap-1 opacity-40">
+                <span class="text-2xl">👤</span>
+                <span class="text-[9px] font-black uppercase">Profile</span>
+            </button>
+        </nav>
     </div>
 
     <script>
         const OWNER_PHONE = "917977313279";
         const menu = [
-            { id: 1, name: "Belgian Chocolate", desc: "Premium Dark Ganache", price: 550, img: "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=300" },
-            { id: 2, name: "Strawberry Bliss", desc: "Fresh Farm Strawberries", price: 600, img: "https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=300" },
-            { id: 3, name: "Lotus Biscoff", desc: "Creamy Biscoff Spread", price: 750, img: "https://images.unsplash.com/photo-1535141192574-5d4897c12636?w=300" },
-            { id: 5, name: "Nutella Brownie", desc: "Hazelnut Goodness", price: 180, img: "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=300" }
+            { id: 1, name: "Belgian Chocolate", cat: "Cakes", desc: "Premium Dark Ganache", price: 550, img: "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=300" },
+            { id: 2, name: "Strawberry Bliss", cat: "Cakes", desc: "Fresh Farm Strawberries", price: 600, img: "https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=300" },
+            { id: 3, name: "Lotus Biscoff", cat: "Cakes", desc: "Creamy Biscoff Spread", price: 750, img: "https://images.unsplash.com/photo-1535141192574-5d4897c12636?w=300" },
+            { id: 5, name: "Nutella Brownie", cat: "Desserts", desc: "Hazelnut Goodness", price: 180, img: "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=300" }
         ];
 
         let cart = [];
-        let currentWeight = 0.5;
-        let currentDiet = "EGGLESS";
+        let activeCategory = 'All';
 
         window.onload = () => {
-            renderMenu();
-            // Set minimum date to today
-            document.getElementById('c-date').min = new Date().toISOString().split("T")[0];
+            renderMenu(menu);
+            renderTrending();
         };
 
-        function renderMenu() {
+        function renderTrending() {
+            const trend = menu.slice(0, 3);
+            document.getElementById('trending-list').innerHTML = trend.map(item => `
+                <div class="trending-card" style="background-image: linear-gradient(to bottom, transparent, rgba(0,0,0,0.8)), url('${item.img}')">
+                    <p class="text-xs font-bold">${item.name}</p>
+                </div>
+            `).join('');
+        }
+
+        function renderMenu(data) {
             const list = document.getElementById('menu-list');
-            list.innerHTML = menu.map(item => `
+            list.innerHTML = data.map(item => `
                 <div class="menu-card">
                     <img src="${item.img}" class="menu-img">
-                    <div class="menu-info">
-                        <div>
-                            <p class="font-black text-sm">${item.name}</p>
-                            <p class="text-[10px] opacity-60">${item.desc}</p>
-                        </div>
-                        <div class="flex justify-between items-center">
-                            <p class="font-black text-red-600">₹${item.price}</p>
-                            <button onclick="addToCart('${item.name}', ${item.price})" class="add-btn">ADD +</button>
-                        </div>
+                    <div class="flex-1 flex flex-col justify-center">
+                        <p class="font-bold text-sm mb-0.5">${item.name}</p>
+                        <p class="text-[10px] opacity-50 mb-2">${item.desc}</p>
+                        <p class="font-black text-amber-500">₹${item.price}</p>
+                    </div>
+                    <div class="flex items-center">
+                        <button onclick="addToCart('${item.name}', ${item.price})" class="add-btn">+</button>
                     </div>
                 </div>
             `).join('');
         }
 
-        function addToCart(name, price) {
-            cart.push({name, price, id: Date.now()});
-            updateCartBadge();
-            showToast();
+        function filterCategory(cat, el) {
+            activeCategory = cat;
+            document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+            el.classList.add('active');
+            filterMenu();
         }
 
-        function showToast() {
-            const t = document.getElementById('toast');
-            t.style.display = 'block';
-            setTimeout(() => t.style.display = 'none', 2000);
+        function filterMenu() {
+            const s = document.getElementById('menuSearch').value.toLowerCase();
+            const filtered = menu.filter(i => 
+                (activeCategory === 'All' || i.cat === activeCategory) && 
+                i.name.toLowerCase().includes(s)
+            );
+            renderMenu(filtered);
+        }
+
+        function addToCart(name, price) {
+            cart.push({name, price});
+            updateCartBadge();
+            const toast = document.getElementById('toast');
+            toast.style.display = 'block';
+            setTimeout(() => toast.style.display = 'none', 1500);
         }
 
         function updateCartBadge() {
-            const b = document.getElementById('cart-badge');
-            b.innerText = cart.length;
-            b.style.display = cart.length > 0 ? 'flex' : 'none';
+            const badge = document.getElementById('cart-badge');
+            badge.innerText = cart.length;
+            badge.style.display = cart.length > 0 ? 'flex' : 'none';
         }
 
-        function setWeight(w, el) {
-            currentWeight = w;
-            document.querySelectorAll('.weight-opt').forEach(btn => btn.classList.remove('selected'));
-            el.classList.add('selected');
-            renderSummary();
-        }
-
-        function setDiet(d, el) {
-            currentDiet = d;
-            document.querySelectorAll('.diet-opt').forEach(btn => btn.classList.remove('selected'));
-            el.classList.add('selected');
-        }
-
-        function renderSummary() {
-            let subtotal = cart.reduce((sum, item) => sum + item.price, 0);
-            let total = (subtotal / 0.5) * currentWeight; // Scales price based on weight
-            
-            let html = `<p class="text-[10px] font-black opacity-50 mb-2">YOUR ITEMS:</p>`;
-            cart.forEach((item, index) => {
-                html += `<div class="flex justify-between text-sm mb-1">
-                    <span>${item.name}</span>
-                    <button onclick="removeItem(${index})" class="text-red-400 text-[10px]">REMOVE</button>
-                </div>`;
-            });
-            html += `<div class="border-t border-white/10 mt-4 pt-4 flex justify-between font-black text-amber-400">
-                <span>TOTAL (${currentWeight}KG):</span>
-                <span>₹${total.toFixed(0)}</span>
-            </div>`;
-            document.getElementById('cart-summary').innerHTML = html;
-        }
-
-        function removeItem(index) {
-            cart.splice(index, 1);
-            if(cart.length === 0) closeCheckout();
-            updateCartBadge();
-            renderSummary();
+        function showView(v) {
+            document.getElementById('view-home').classList.toggle('hidden', v !== 'home');
+            document.getElementById('view-profile').classList.toggle('hidden', v !== 'profile');
+            document.getElementById('btn-home').style.opacity = v === 'home' ? '1' : '0.4';
+            document.getElementById('btn-profile').style.opacity = v === 'profile' ? '1' : '0.4';
         }
 
         function openCheckout() {
-            if(cart.length === 0) return alert("Your cart is empty! 🎂");
-            renderSummary();
+            if(cart.length === 0) return alert("Cart is empty! 🍰");
+            const itemsList = document.getElementById('cart-items');
+            itemsList.innerHTML = cart.map((item, index) => `
+                <div class="flex justify-between bg-white/5 p-4 rounded-xl">
+                    <span>${item.name}</span>
+                    <span class="font-bold">₹${item.price}</span>
+                </div>
+            `).join('');
             document.getElementById('checkout-overlay').classList.remove('hidden');
         }
 
@@ -305,27 +330,34 @@
             document.getElementById('checkout-overlay').classList.add('hidden');
         }
 
-        function showView(v) {
-            document.getElementById('view-home').classList.toggle('hidden', v !== 'home');
-            document.getElementById('view-profile').classList.toggle('hidden', v !== 'profile');
-            document.getElementById('nav-home').classList.toggle('active', v === 'home');
-            document.getElementById('nav-profile').classList.toggle('active', v === 'profile');
-        }
-
         function sendOrder() {
             const name = document.getElementById('c-name').value;
             const phone = document.getElementById('c-phone').value;
+            const addr = document.getElementById('c-addr').value;
+            const pref = document.getElementById('c-pref').value;
+            const msg = document.getElementById('c-msg').value || "No message";
             const date = document.getElementById('c-date').value;
-            
-            if(!name || !phone || !date) return alert("Please fill Name, Phone and Date!");
+            const time = document.getElementById('c-time').value;
 
-            const items = cart.map(i => i.name).join(", ");
-            const subtotal = cart.reduce((sum, item) => sum + item.price, 0);
-            const finalTotal = (subtotal / 0.5) * currentWeight;
+            if(!name || !phone || !addr || !date || !time) return alert("Please fill all details! 📝");
 
-            const text = `*NEW ORIKEK ORDER*%0A---%0A*Customer:* ${name}%0A*Phone:* ${phone}%0A*Items:* ${items}%0A*Weight:* ${currentWeight}KG%0A*Diet:* ${currentDiet}%0A*Delivery Date:* ${date}%0A*Total:* ₹${finalTotal}`;
+            let orderText = `*New Order from Orikek App*%0A%0A`;
+            orderText += `*Name:* ${name}%0A`;
+            orderText += `*Phone:* ${phone}%0A`;
+            orderText += `*Preference:* ${pref}%0A`;
+            orderText += `*Cake Message:* ${msg}%0A`;
+            orderText += `*Delivery:* ${date} at ${time}%0A`;
+            orderText += `*Address:* ${addr}%0A%0A`;
+            orderText += `*Items:*%0A`;
             
-            window.open(`https://wa.me/${OWNER_PHONE}?text=${text}`, '_blank');
+            let total = 0;
+            cart.forEach(item => {
+                orderText += `- ${item.name} (₹${item.price})%0A`;
+                total += item.price;
+            });
+
+            orderText += `%0A*Total: ₹${total}*`;
+            window.open(`https://wa.me/${OWNER_PHONE}?text=${orderText}`, '_blank');
         }
     </script>
 </body>
