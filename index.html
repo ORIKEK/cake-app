@@ -6,9 +6,8 @@
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#4d1d0c">
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Orikek - A Daily Celebration</title>
-    
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         :root {
@@ -17,16 +16,33 @@
             --bg-dark: #1a0d08;
             --accent-green: #22c55e;
         }
-        
+
+        /* CUSTOM SCROLLBAR: Optimized for Windows 7 / Chrome */
+        #content-area::-webkit-scrollbar, 
+        .full-overlay::-webkit-scrollbar {
+            width: 6px; /* SPACE: Width of the scrollbar */
+        }
+        #content-area::-webkit-scrollbar-track, 
+        .full-overlay::-webkit-scrollbar-track {
+            background: var(--bg-dark);
+        }
+        #content-area::-webkit-scrollbar-thumb, 
+        .full-overlay::-webkit-scrollbar-thumb {
+            background: var(--brand-gold);
+            border-radius: 10px;
+        }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--bg-dark);
             color: white;
             margin: 0;
             height: 100vh;
+            height: -webkit-fill-available;
             overflow: hidden;
             display: flex;
             justify-content: center;
+            -webkit-tap-highlight-color: transparent;
         }
 
         #app-container {
@@ -43,6 +59,7 @@
         header {
             background: linear-gradient(to bottom, rgba(77, 29, 12, 1), rgba(77, 29, 12, 0.8));
             padding: 25px 20px;
+            padding-top: calc(25px + env(safe-area-inset-top));
             border-bottom: 1px solid rgba(255,255,255,0.1);
             z-index: 100;
         }
@@ -50,8 +67,22 @@
         #content-area {
             flex: 1;
             overflow-y: auto;
-            padding-bottom: 110px;
-            scrollbar-width: none;
+            padding-bottom: 140px;
+            -webkit-overflow-scrolling: touch;
+            position: relative;
+        }
+
+        #refresh-indicator {
+            text-align: center;
+            height: 0;
+            overflow: hidden;
+            transition: height 0.2s;
+            background: rgba(0,0,0,0.2);
+            font-size: 12px;
+            color: var(--brand-gold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .search-container { padding: 10px 20px; }
@@ -63,6 +94,7 @@
             padding: 12px 15px; 
             color: white; 
             outline: none; 
+            font-size: 16px; 
         }
 
         .trending-container { padding: 10px 0; }
@@ -73,6 +105,8 @@
             padding: 0 20px; 
             scrollbar-width: none; 
         }
+        .trending-slider::-webkit-scrollbar { display: none; }
+
         .trending-card { 
             min-width: 160px; 
             height: 220px; 
@@ -85,9 +119,11 @@
             padding: 15px;
             border: 1px solid rgba(255,255,255,0.1);
             box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            cursor: pointer; 
         }
 
         .category-bar { display: flex; gap: 10px; padding: 10px 20px; overflow-x: auto; scrollbar-width: none; }
+        .category-bar::-webkit-scrollbar { display: none; }
         .chip { 
             padding: 10px 20px; 
             background: rgba(255,255,255,0.05); 
@@ -111,7 +147,21 @@
             border: 1px solid rgba(255,255,255,0.05);
             animation: fadeIn 0.5s ease forwards;
         }
+
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        @keyframes toastIn { 
+            0% { transform: translate(-50%, 20px); opacity: 0; }
+            100% { transform: translate(-50%, 0); opacity: 1; }
+        }
+
+        /* NEW: Badge Pop Animation */
+        @keyframes badgePop {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.4); }
+            100% { transform: scale(1); }
+        }
+        .badge-animate { animation: badgePop 0.3s ease; }
 
         .form-input { 
             width: 100%; 
@@ -121,6 +171,7 @@
             padding: 14px; 
             color: white; 
             margin-bottom: 12px;
+            font-size: 16px;
         }
 
         .full-overlay {
@@ -130,19 +181,38 @@
             z-index: 2000;
             display: none;
             flex-direction: column;
+            padding-top: env(safe-area-inset-top);
+            overscroll-behavior: contain;
         }
 
         nav {
             background: #000000;
-            height: 85px;
+            height: calc(90px + env(safe-area-inset-bottom));
             border-top: 1px solid rgba(255,255,255,0.1);
             position: absolute;
             bottom: 0;
             width: 100%;
             display: flex;
             justify-content: space-around;
+            align-items: flex-start;
+            padding-top: 15px;
+            padding-bottom: env(safe-area-inset-bottom);
+            z-index: 500;
+        }
+
+        .cart-btn-special {
+            background: white;
+            color: black;
+            width: 65px;
+            height: 65px;
+            border-radius: 20px;
+            display: flex;
             align-items: center;
-            padding-bottom: 10px;
+            justify-content: center;
+            position: relative;
+            top: -30px; 
+            box-shadow: 0 15px 30px rgba(0,0,0,0.5);
+            transition: transform 0.2s;
         }
 
         .qty-btn {
@@ -158,13 +228,12 @@
     </style>
 </head>
 <body>
-
     <div id="app-container">
         <header>
             <div class="flex justify-between items-center">
                 <div>
-                    <h1 class="text-3xl font-black text-amber-50">Orikek</h1>
-                    <p class="text-[10px] uppercase tracking-[4px] opacity-50">A Daily Celebration</p>
+                    <h1 class="text-3xl font-black text-amber-50" id="brand-title">Orikek</h1>
+                    <p class="text-[10px] uppercase tracking-[4px] opacity-50" id="dynamic-greeting">A Daily Celebration</p>
                 </div>
                 <div class="text-right">
                     <span id="xp-counter" class="bg-amber-500/20 text-amber-500 text-[10px] font-bold px-3 py-1 rounded-full border border-amber-500/30">0 XP</span>
@@ -173,6 +242,8 @@
         </header>
 
         <div id="content-area">
+            <div id="refresh-indicator">Release to Refresh...</div>
+
             <div class="search-container">
                 <input type="text" id="search-input" placeholder="Search for your favorite cake..." class="search-bar" oninput="handleSearch()">
             </div>
@@ -192,40 +263,41 @@
             <div id="menu-list" class="pt-4"></div>
         </div>
 
+        <div id="detail-overlay" class="full-overlay">
+            <div id="detail-content" class="flex flex-col h-full">
+                </div>
+        </div>
+
         <div id="checkout-overlay" class="full-overlay">
             <div class="p-6 border-b border-white/10 flex justify-between items-center bg-black/40">
                 <h2 class="text-2xl font-bold">Your Treat Box</h2>
                 <button onclick="closeOverlay('checkout-overlay')" class="text-3xl">&times;</button>
             </div>
-            <div class="flex-1 overflow-y-auto p-6">
+            <div class="flex-1 overflow-y-auto p-6 pb-20">
                 <div id="cart-items" class="space-y-3 mb-6"></div>
-                
                 <button onclick="clearCart()" class="text-red-400 text-xs font-bold uppercase mb-4 flex items-center gap-2">
                     <span>🗑️</span> EMPTY BOX
                 </button>
-
                 <div id="order-summary" class="bg-black/20 p-4 rounded-2xl mb-6 border border-white/5 space-y-2 text-sm">
                     <div class="flex justify-between text-gray-400"><span>Subtotal</span><span id="summary-subtotal">₹0</span></div>
                     <div class="flex justify-between text-gray-400"><span>Delivery Fee</span><span>₹50</span></div>
                     <div class="flex justify-between text-amber-500 font-bold text-lg pt-2 border-t border-white/10"><span>Grand Total</span><span id="summary-total">₹0</span></div>
                 </div>
-
                 <div class="space-y-4">
-                    <input type="text" id="c-name" placeholder="Name" class="form-input" onchange="saveUserData()">
+                    <input type="text" id="c-name" placeholder="Full Name" class="form-input" onchange="saveUserData()">
                     <input type="tel" id="c-phone" placeholder="WhatsApp Number" class="form-input" onchange="saveUserData()">
                     <select id="c-pref" class="form-input">
                         <option value="Egg">With Egg</option>
                         <option value="Eggless">Eggless</option>
                     </select>
-                    <input type="text" id="c-msg" placeholder="Note for the Chef" class="form-input">
+                    <input type="text" id="c-msg" placeholder="Note for the Chef (e.g. Message on cake)" class="form-input">
                     <div class="flex gap-3">
                         <input type="date" id="c-date" class="form-input flex-1">
                         <input type="time" id="c-time" class="form-input flex-1">
                     </div>
-                    <textarea id="c-addr" placeholder="Delivery Address" rows="3" class="form-input" onchange="saveUserData()"></textarea>
+                    <textarea id="c-addr" placeholder="Full Delivery Address with Landmark" rows="3" class="form-input" onchange="saveUserData()"></textarea>
                 </div>
-
-                <button onclick="sendWhatsApp()" class="w-full bg-green-600 text-white py-5 rounded-2xl font-black mt-6 mb-12 shadow-2xl">
+                <button onclick="sendWhatsApp()" class="w-full bg-green-600 text-white py-5 rounded-2xl font-black mt-6 mb-12 shadow-2xl active:scale-95 transition">
                     ORDER VIA WHATSAPP
                 </button>
             </div>
@@ -240,7 +312,6 @@
                 <div class="w-28 h-28 bg-amber-600 rounded-full mx-auto mb-6 flex items-center justify-center text-5xl border-4 border-amber-500/50 shadow-2xl">👤</div>
                 <h3 id="p-name" class="text-2xl font-bold text-amber-50">Guest</h3>
                 <p id="p-tier" class="text-amber-500 text-xs font-bold uppercase tracking-widest mt-1 mb-8">Bronze Member</p>
-                
                 <div class="grid grid-cols-2 gap-4">
                     <div class="bg-white/5 p-4 rounded-2xl">
                         <p class="text-[10px] opacity-50 uppercase">Total XP</p>
@@ -255,15 +326,17 @@
         </div>
 
         <nav>
-            <button onclick="location.reload()" class="flex flex-col items-center">
-                <span class="text-2xl">🏠</span><span class="text-[9px] mt-1">EXPLORE</span>
+            <button onclick="location.reload()" class="flex flex-col items-center flex-1">
+                <span class="text-2xl">🏠</span><span class="text-[9px] mt-1 font-bold">EXPLORE</span>
             </button>
-            <button onclick="openCheckout()" class="bg-white text-black w-16 h-16 rounded-3xl flex items-center justify-center relative -top-6 shadow-2xl transform active:scale-95 transition">
-                <span class="text-2xl">🛒</span>
-                <span id="badge" class="absolute -top-2 -right-2 bg-red-600 text-white text-[11px] px-2 py-0.5 rounded-full hidden font-bold">0</span>
-            </button>
-            <button onclick="openProfile()" class="flex flex-col items-center">
-                <span class="text-2xl">👤</span><span class="text-[9px] mt-1">ACCOUNT</span>
+            <div class="flex flex-col items-center flex-1">
+                <button onclick="openCheckout()" class="cart-btn-special shadow-2xl transform active:scale-90 transition">
+                    <span class="text-3xl">🛒</span>
+                    <span id="badge" class="absolute -top-1 -right-1 bg-red-600 text-white text-[11px] px-2 py-0.5 rounded-full hidden font-bold">0</span>
+                </button>
+            </div>
+            <button onclick="openProfile()" class="flex flex-col items-center flex-1">
+                <span class="text-2xl">👤</span><span class="text-[9px] mt-1 font-bold">ACCOUNT</span>
             </button>
         </nav>
     </div>
@@ -273,31 +346,81 @@
         const DELIVERY_CHARGE = 50;
         
         const fullMenu = [
-            { id: 1, name: "Belgian Chocolate", cat: "Cakes", price: 550, trend: true, img: "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400" },
-            { id: 2, name: "Strawberry Bliss", cat: "Cakes", price: 600, trend: true, img: "https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=400" },
-            { id: 3, name: "Lotus Biscoff", cat: "Cakes", price: 750, trend: true, img: "https://images.unsplash.com/photo-1535141192574-5d4897c12636?w=400" },
-            { id: 4, name: "Nutella Brownie", cat: "Desserts", price: 180, trend: false, img: "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=400" },
-            { id: 5, name: "Red Velvet Jar", cat: "Desserts", price: 220, trend: false, img: "https://images.unsplash.com/photo-1586788680434-30d324671b1c?w=400" },
-            { id: 6, name: "Death by Chocolate", cat: "Cakes", price: 650, trend: true, img: "https://images.unsplash.com/photo-1542826438-bd32f43d626f?w=400" },
-            { id: 7, name: "Vanilla Bean Cupcake", cat: "Cupcakes", price: 80, trend: false, img: "https://images.unsplash.com/photo-1519869325930-281384150729?w=400" },
-            { id: 8, name: "Blueberry Cheesecake", cat: "Cakes", price: 800, trend: false, img: "https://images.unsplash.com/photo-1533134242443-d4fd215305ad?w=400" },
-            { id: 9, name: "Tiramisu Box", cat: "Desserts", price: 350, trend: false, img: "https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?w=400" },
-            { id: 10, name: "Ferrero Rocher Cake", cat: "Cakes", price: 900, trend: true, img: "https://images.unsplash.com/photo-1582760926402-9b55283a0277?w=400" }
+            { id: 1, name: "Belgian Chocolate", cat: "Cakes", price: 550, trend: true, img: "https://images.unsplash.com/photo-1578985545062-69928b1d9587?w=400", desc: "Pure indulgence with 55% Belgian dark chocolate ganache." },
+            { id: 2, name: "Strawberry Bliss", cat: "Cakes", price: 600, trend: true, img: "https://images.unsplash.com/photo-1565958011703-44f9829ba187?w=400", desc: "Fresh seasonal strawberries with light whipped cream." },
+            { id: 3, name: "Lotus Biscoff", cat: "Cakes", price: 750, trend: true, img: "https://images.unsplash.com/photo-1531141192574-5d4897c12636?w=400", desc: "The viral caramelized biscuit flavour in every bite." },
+            { id: 4, name: "Nutella Brownie", cat: "Desserts", price: 180, trend: false, img: "https://images.unsplash.com/photo-1606313564200-e75d5e30476c?w=400", desc: "Fudgy brownie swirled with thick Nutella." },
+            { id: 5, name: "Red Velvet Jar", cat: "Desserts", price: 220, trend: false, img: "https://images.unsplash.com/photo-1586788680434-30d324671b1c?w=400", desc: "Classic red velvet cake layers with cream cheese frosting." },
+            { id: 6, name: "Death by Chocolate", cat: "Cakes", price: 650, trend: true, img: "https://images.unsplash.com/photo-1542826438-bd32f43d626f?w=400", desc: "Triple layer chocolate cake for the ultimate fan." },
+            { id: 7, name: "Vanilla Bean Cupcake", cat: "Cupcakes", price: 80, trend: false, img: "https://images.unsplash.com/photo-1519869325930-281384150729?w=400", desc: "Light and airy with real Madagascar vanilla bean." },
+            { id: 8, name: "Blueberry Cheesecake", cat: "Cakes", price: 800, trend: false, img: "https://images.unsplash.com/photo-1533134242443-d4fd215305ad?w=400", desc: "New York style cheesecake topped with blueberry compote." },
+            { id: 9, name: "Tiramisu Box", cat: "Desserts", price: 350, trend: false, img: "https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?w=400", desc: "Coffee-soaked ladyfingers with rich mascarpone." },
+            { id: 10, name: "Ferrero Rocher Cake", cat: "Cakes", price: 900, trend: true, img: "https://images.unsplash.com/photo-1582760926402-9b55283a0277?w=400", desc: "Hazelnut goodness with crunchy Ferrero pieces." },
+            { id: 11, name: "Mango Delight", cat: "Cakes", price: 500, trend: false, img: "https://images.unsplash.com/photo-1534353473418-4cfa6c56fd38?w=400", desc: "Alphonso mango pulp layered with soft sponge." },
+            { id: 12, name: "Dark Truffle Cupcake", cat: "Cupcakes", price: 95, trend: false, img: "https://images.unsplash.com/photo-1576618148400-f54bed99fcfd?w=400", desc: "Intense dark chocolate cupcake with a gooey center." }
         ];
 
-        let cart = {}; // Store id: quantity
+        let cart = {}; 
         let userXP = parseInt(localStorage.getItem('orikek_xp')) || 0;
+        let ordersDone = parseInt(localStorage.getItem('orikek_orders')) || 0;
+
+        function sanitize(str) {
+            const div = document.createElement('div');
+            div.textContent = str;
+            return div.innerHTML;
+        }
+
+        function setDynamicGreeting() {
+            const hour = new Date().getHours();
+            const greetingEl = document.getElementById('dynamic-greeting');
+            if (hour < 12) greetingEl.innerText = "Good Morning, Sweet Tooth!";
+            else if (hour < 17) greetingEl.innerText = "Afternoon Cravings?";
+            else if (hour < 21) greetingEl.innerText = "Sweet Evening Treats!";
+            else greetingEl.innerText = "Late Night Cravings?";
+        }
+
+        function initPullToRefresh() {
+            const content = document.getElementById('content-area');
+            const indicator = document.getElementById('refresh-indicator');
+            let startY = 0;
+
+            content.addEventListener('touchstart', e => {
+                if (content.scrollTop === 0) startY = e.touches[0].pageY;
+            });
+
+            content.addEventListener('touchmove', e => {
+                const y = e.touches[0].pageY;
+                if (content.scrollTop === 0 && y > startY) {
+                    const diff = y - startY;
+                    if (diff < 70) indicator.style.height = diff + 'px';
+                }
+            });
+
+            content.addEventListener('touchend', e => {
+                if (parseInt(indicator.style.height) > 50) {
+                    location.reload();
+                }
+                indicator.style.height = '0px';
+            });
+        }
 
         window.onload = () => {
+            setDynamicGreeting();
+            initPullToRefresh();
+            
             const trending = fullMenu.filter(m => m.trend);
             document.getElementById('trending-list').innerHTML = trending.map(item => `
-                <div class="trending-card" style="background-image: linear-gradient(transparent, rgba(0,0,0,0.9)), url('${item.img}')">
+                <div class="trending-card" onclick="openDetails(${item.id})" style="background-image: linear-gradient(transparent, rgba(0,0,0,0.9)), url('${item.img}')">
                     <div class="w-full">
                         <p class="text-xs font-black text-white">${item.name}</p>
-                        <p class="text-[10px] text-amber-400">Premium Choice</p>
+                        <p class="text-[10px] text-amber-400">View Details</p>
                     </div>
                 </div>
             `).join('');
+            
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('c-date').setAttribute('min', today);
+
             loadUserData();
             updateXPDisplay();
             renderItems(fullMenu);
@@ -305,16 +428,57 @@
 
         function renderItems(data) {
             const list = document.getElementById('menu-list');
+            if (data.length === 0) {
+                list.innerHTML = `
+                    <div class="text-center py-10 opacity-50">
+                        <p class="text-4xl mb-3">🧁</p>
+                        <p>No cakes found matching that search.</p>
+                    </div>
+                `;
+                return;
+            }
             list.innerHTML = data.map(item => `
-                <div class="menu-card">
-                    <img src="${item.img}" class="w-24 h-24 rounded-2xl object-cover shadow-lg">
+                <div class="menu-card" onclick="openDetails(${item.id})">
+                    <img src="${item.img}" alt="${item.name}" class="w-24 h-24 rounded-2xl object-cover shadow-lg" loading="lazy">
                     <div class="flex-1">
                         <p class="font-bold text-base text-amber-50">${item.name}</p>
                         <p class="text-amber-500 font-black text-lg">₹${item.price}</p>
                     </div>
-                    <button onclick="addToCart(${item.id})" class="bg-white text-black w-10 h-10 rounded-xl font-bold text-xl">+</button>
+                    <button onclick="event.stopPropagation(); addToCart(${item.id})" class="bg-white text-black w-10 h-10 rounded-xl font-bold text-xl active:scale-90 transition">+</button>
                 </div>
             `).join('');
+        }
+
+        // NEW: Open Details function
+        function openDetails(id) {
+            const item = fullMenu.find(m => m.id == id);
+            const detailOverlay = document.getElementById('detail-overlay');
+            document.getElementById('detail-content').innerHTML = `
+                <div class="relative h-2/3">
+                    <img src="${item.img}" class="w-full h-full object-cover">
+                    <button onclick="closeOverlay('detail-overlay')" class="absolute top-10 right-6 bg-black/50 w-10 h-10 rounded-full text-2xl">&times;</button>
+                </div>
+                <div class="p-8 bg-[#1a0d08] -mt-10 rounded-t-[40px] flex-1">
+                    <div class="flex justify-between items-start mb-4">
+                        <h2 class="text-3xl font-black">${item.name}</h2>
+                        <p class="text-2xl font-bold text-amber-500">₹${item.price}</p>
+                    </div>
+                    <p class="text-gray-400 leading-relaxed mb-10">${item.desc || 'No description available.'}</p>
+                    <button onclick="addToCart(${item.id}); closeOverlay('detail-overlay')" class="w-full bg-amber-500 text-black py-5 rounded-2xl font-black shadow-xl">
+                        ADD TO BOX
+                    </button>
+                </div>
+            `;
+            detailOverlay.style.display = 'flex';
+        }
+
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = "fixed bottom-24 left-1/2 -translate-x-1/2 bg-white text-black px-6 py-3 rounded-2xl font-bold text-sm shadow-2xl z-[3000]";
+            toast.style.animation = "toastIn 0.3s ease forwards";
+            toast.innerText = message;
+            document.body.appendChild(toast);
+            setTimeout(() => { toast.remove(); }, 2000);
         }
 
         function addToCart(id) {
@@ -322,6 +486,7 @@
             userXP += 10;
             updateXPDisplay();
             updateBadge();
+            showToast("Added to Treat Box! 🧁");
         }
 
         function updateBadge() {
@@ -329,11 +494,17 @@
             const badge = document.getElementById('badge');
             badge.innerText = count;
             badge.style.display = count > 0 ? 'block' : 'none';
+            // NEW: Add animation trigger
+            badge.classList.remove('badge-animate');
+            void badge.offsetWidth; // SPACE: Trigger reflow for animation
+            badge.classList.add('badge-animate');
         }
 
         function updateXPDisplay() {
             document.getElementById('xp-counter').innerText = userXP + " XP";
             localStorage.setItem('orikek_xp', userXP);
+            if (userXP > 500) document.getElementById('p-tier').innerText = "Silver Member";
+            if (userXP > 1500) document.getElementById('p-tier').innerText = "Gold Member";
         }
 
         function openCheckout() {
@@ -386,9 +557,9 @@
 
         function saveUserData() {
             const data = {
-                name: document.getElementById('c-name').value,
-                phone: document.getElementById('c-phone').value,
-                addr: document.getElementById('c-addr').value
+                name: sanitize(document.getElementById('c-name').value),
+                phone: sanitize(document.getElementById('c-phone').value),
+                addr: sanitize(document.getElementById('c-addr').value)
             };
             localStorage.setItem('orikek_user', JSON.stringify(data));
         }
@@ -404,32 +575,52 @@
         }
 
         function openProfile() {
-            const name = document.getElementById('c-name').value || "Guest";
+            const name = sanitize(document.getElementById('c-name').value) || "Guest";
             document.getElementById('p-name').innerText = name;
             document.getElementById('xp-val').innerText = userXP;
+            document.getElementById('order-count').innerText = ordersDone;
             document.getElementById('profile-overlay').style.display = 'flex';
         }
 
         function sendWhatsApp() {
-            const name = document.getElementById('c-name').value;
-            const phone = document.getElementById('c-phone').value;
-            const addr = document.getElementById('c-addr').value;
+            const name = sanitize(document.getElementById('c-name').value);
+            const phone = sanitize(document.getElementById('c-phone').value);
+            const addr = sanitize(document.getElementById('c-addr').value);
             const date = document.getElementById('c-date').value;
             const time = document.getElementById('c-time').value;
             const pref = document.getElementById('c-pref').value;
+            const msg = sanitize(document.getElementById('c-msg').value) || "No note";
 
-            if(!name || !phone || !addr || !date || !time) return alert("Details missing!");
+            if(!name || !phone || !addr || !date || !time) return alert("Please fill all details!");
 
-            let total = 0;
+            let displayedTotal = parseInt(document.getElementById('summary-total').innerText.replace('₹', ''));
+            let calculatedTotal = DELIVERY_CHARGE;
             let listText = "";
+            
             for (const id in cart) {
-                const item = fullMenu.find(m => m.id == id);
-                listText += `%0A- ${item.name} x ${cart[id]} (₹${item.price * cart[id]})`;
-                total += (item.price * cart[id]);
+                const masterItem = fullMenu.find(m => m.id == id);
+                const quantity = cart[id];
+                const itemCost = masterItem.price * quantity;
+                listText += `\n- ${masterItem.name} x ${quantity} (₹${itemCost})`;
+                calculatedTotal += itemCost;
             }
 
-            const text = `*ORIKÉK ORDER*%0A*Name:* ${name}%0A*Pref:* ${pref}%0A*Delivery:* ${date} @ ${time}%0A*Items:*${listText}%0A*Total:* ₹${total + DELIVERY_CHARGE}`;
-            window.open(`https://wa.me/${OWNER_PHONE}?text=${text}`, '_blank');
+            // PRICE VERIFICATION LOGIC
+            let safetyStatus = "";
+            if (displayedTotal !== calculatedTotal) {
+                safetyStatus = "\n⚠️ *[!] PRICE MISMATCH DETECTED*";
+            } else {
+                safetyStatus = "\n✅ *Verified Order*";
+            }
+
+            ordersDone++;
+            userXP += 100;
+            localStorage.setItem('orikek_orders', ordersDone);
+            updateXPDisplay();
+
+            const rawText = `*ORIKÉK ORDER*\n*Name:* ${name}\n*Pref:* ${pref}\n*Delivery:* ${date} @ ${time}\n*Items:*${listText}\n*Note:* ${msg}\n*Total:* ₹${calculatedTotal}${safetyStatus}\n*Address:* ${addr}`;
+            const encodedText = encodeURIComponent(rawText);
+            window.open(`https://wa.me/${OWNER_PHONE}?text=${encodedText}`, '_blank');
         }
 
         function filterMenu(cat, el) {
