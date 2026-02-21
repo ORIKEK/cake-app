@@ -20,7 +20,7 @@
         /* CUSTOM SCROLLBAR: Optimized for Windows 7 / Chrome */
         #content-area::-webkit-scrollbar, 
         .full-overlay::-webkit-scrollbar {
-            width: 6px; /* SPACE: Width of the scrollbar */
+            width: 6px; 
         }
         #content-area::-webkit-scrollbar-track, 
         .full-overlay::-webkit-scrollbar-track {
@@ -37,7 +37,6 @@
             background-color: var(--bg-dark);
             color: white;
             margin: 0;
-            /* SPACE: Use vh for Windows 7 / Laptop stability */
             height: 100vh; 
             overflow: hidden;
             display: flex;
@@ -52,14 +51,14 @@
             position: relative;
             display: flex;
             flex-direction: column;
-            /* SPACE: Ensure container fills the laptop screen */
             height: 100%; 
             overflow: hidden;
             box-shadow: 0 0 50px rgba(0,0,0,0.5);
         }
 
         header {
-            background: linear-gradient(to bottom, rgba(77, 29, 12, 1), rgba(77, 29, 12, 0.8));
+            background: rgba(77, 29, 12, 0.95);
+            backdrop-filter: blur(10px);
             padding: 25px 20px;
             padding-top: calc(25px + env(safe-area-inset-top));
             border-bottom: 1px solid rgba(255,255,255,0.1);
@@ -69,15 +68,13 @@
         #content-area {
             flex: 1;
             overflow-y: auto;
-            /* SPACE: Padding adjusted to accommodate the 90px nav + extra breathing room */
             padding-bottom: 40px; 
             -webkit-overflow-scrolling: touch;
             position: relative;
         }
 
-        /* NEW: Footer Spacer to prevent content cut-off */
         .nav-spacer {
-            height: 120px; /* SPACE: Slightly taller than the nav bar to ensure visibility */
+            height: 120px; 
             width: 100%;
         }
 
@@ -104,7 +101,9 @@
             color: white; 
             outline: none; 
             font-size: 16px; 
+            transition: all 0.3s ease;
         }
+        .search-bar:focus { border-color: var(--brand-gold); background: rgba(255,255,255,0.1); }
 
         .trending-container { padding: 10px 0; }
         .trending-slider { 
@@ -129,7 +128,9 @@
             border: 1px solid rgba(255,255,255,0.1);
             box-shadow: 0 10px 20px rgba(0,0,0,0.3);
             cursor: pointer; 
+            transition: transform 0.3s ease;
         }
+        .trending-card:active { transform: scale(0.95); }
 
         .category-bar { display: flex; gap: 10px; padding: 10px 20px; overflow-x: auto; scrollbar-width: none; }
         .category-bar::-webkit-scrollbar { display: none; }
@@ -155,7 +156,9 @@
             align-items: center;
             border: 1px solid rgba(255,255,255,0.05);
             animation: fadeIn 0.5s ease forwards;
+            transition: background 0.3s ease;
         }
+        .menu-card:active { background: rgba(255, 255, 255, 0.08); }
 
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         
@@ -195,10 +198,8 @@
 
         nav {
             background: #000000;
-            /* SPACE: height for mobile safety */
             height: 90px; 
             border-top: 1px solid rgba(255,255,255,0.1);
-            /* SPACE: Fixed position works better for Orikek on Mobile */
             position: absolute; 
             bottom: 0;
             left: 0;
@@ -234,6 +235,21 @@
             align-items: center;
             justify-content: center;
             font-weight: bold;
+        }
+
+        .progress-container {
+            width: 100%;
+            background: rgba(255,255,255,0.1);
+            height: 6px;
+            border-radius: 10px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+        .progress-bar {
+            height: 100%;
+            background: var(--brand-gold);
+            width: 0%;
+            transition: width 0.5s ease;
         }
     </style>
 </head>
@@ -285,7 +301,7 @@
             </div>
             <div class="flex-1 overflow-y-auto p-6 pb-20">
                 <div id="cart-items" class="space-y-3 mb-6"></div>
-                <button onclick="clearCart()" class="text-red-400 text-xs font-bold uppercase mb-4 flex items-center gap-2">
+                <button id="clear-cart-btn" onclick="clearCart()" class="text-red-400 text-xs font-bold uppercase mb-4 flex items-center gap-2">
                     <span>🗑️</span> EMPTY BOX
                 </button>
                 <div id="order-summary" class="bg-black/20 p-4 rounded-2xl mb-6 border border-white/5 space-y-2 text-sm">
@@ -322,7 +338,15 @@
             <div class="p-10 text-center">
                 <div class="w-28 h-28 bg-amber-600 rounded-full mx-auto mb-6 flex items-center justify-center text-5xl border-4 border-amber-500/50 shadow-2xl">👤</div>
                 <h3 id="p-name" class="text-2xl font-bold text-amber-50">Guest</h3>
-                <p id="p-tier" class="text-amber-500 text-xs font-bold uppercase tracking-widest mt-1 mb-8">Bronze Member</p>
+                <p id="p-tier" class="text-amber-500 text-xs font-bold uppercase tracking-widest mt-1">Bronze Member</p>
+                
+                <div class="max-w-[200px] mx-auto mb-8">
+                    <div class="progress-container">
+                        <div id="xp-progress" class="progress-bar"></div>
+                    </div>
+                    <p class="text-[9px] opacity-40 mt-2">NEXT TIER AT 500 XP</p>
+                </div>
+
                 <div class="grid grid-cols-2 gap-4">
                     <div class="bg-white/5 p-4 rounded-2xl">
                         <p class="text-[10px] opacity-50 uppercase">Total XP</p>
@@ -475,7 +499,7 @@
                         <p class="text-2xl font-bold text-amber-500">₹${item.price}</p>
                     </div>
                     <p class="text-gray-400 leading-relaxed mb-10">${item.desc || 'No description available.'}</p>
-                    <button onclick="addToCart(${item.id}); closeOverlay('detail-overlay')" class="w-full bg-amber-500 text-black py-5 rounded-2xl font-black shadow-xl">
+                    <button onclick="addToCart(${item.id}); closeOverlay('detail-overlay')" class="w-full bg-amber-500 text-black py-5 rounded-2xl font-black shadow-xl active:scale-95 transition">
                         ADD TO BOX
                     </button>
                     <div class="nav-spacer"></div>
@@ -507,15 +531,31 @@
             badge.innerText = count;
             badge.style.display = count > 0 ? 'block' : 'none';
             badge.classList.remove('badge-animate');
-            void badge.offsetWidth; // SPACE: Trigger reflow for animation
+            void badge.offsetWidth; 
             badge.classList.add('badge-animate');
         }
 
         function updateXPDisplay() {
             document.getElementById('xp-counter').innerText = userXP + " XP";
+            document.getElementById('xp-val').innerText = userXP;
             localStorage.setItem('orikek_xp', userXP);
-            if (userXP > 500) document.getElementById('p-tier').innerText = "Silver Member";
-            if (userXP > 1500) document.getElementById('p-tier').innerText = "Gold Member";
+            
+            let tier = "Bronze Member";
+            let nextXP = 500;
+            let progress = (userXP / 500) * 100;
+
+            if (userXP >= 500) {
+                tier = "Silver Member";
+                nextXP = 1500;
+                progress = ((userXP - 500) / 1000) * 100;
+            }
+            if (userXP >= 1500) {
+                tier = "Gold Member";
+                progress = 100;
+            }
+
+            document.getElementById('p-tier').innerText = tier;
+            document.getElementById('xp-progress').style.width = Math.min(progress, 100) + "%";
         }
 
         function openCheckout() {
@@ -554,7 +594,11 @@
         function changeQty(id, delta) {
             cart[id] += delta;
             if (cart[id] <= 0) delete cart[id];
-            renderCartItems();
+            if (Object.keys(cart).length === 0) {
+                closeOverlay('checkout-overlay');
+            } else {
+                renderCartItems();
+            }
             updateBadge();
         }
 
@@ -588,8 +632,8 @@
         function openProfile() {
             const name = sanitize(document.getElementById('c-name').value) || "Guest";
             document.getElementById('p-name').innerText = name;
-            document.getElementById('xp-val').innerText = userXP;
             document.getElementById('order-count').innerText = ordersDone;
+            updateXPDisplay();
             document.getElementById('profile-overlay').style.display = 'flex';
         }
 
