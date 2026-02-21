@@ -1,8 +1,6 @@
-self.addEventListener('install', (event) => {
-  console.log('Orikek Service Worker installed');
-});
-
-self.addEventListener('fetch', (event) => {
-  // This is a basic pass-through to satisfy PWA requirements
-  event.respondWith(fetch(event.request));
-});
+// Register Service Worker
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('service-worker.js')
+    .then(() => console.log("Service Worker Registered"))
+    .catch(err => console.log("Service Worker Failed", err));
+}
