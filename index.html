@@ -69,10 +69,16 @@
         #content-area {
             flex: 1;
             overflow-y: auto;
-            /* SPACE: Increased padding to prevent nav overlap */
-            padding-bottom: 120px; 
+            /* SPACE: Padding adjusted to accommodate the 90px nav + extra breathing room */
+            padding-bottom: 40px; 
             -webkit-overflow-scrolling: touch;
             position: relative;
+        }
+
+        /* NEW: Footer Spacer to prevent content cut-off */
+        .nav-spacer {
+            height: 120px; /* SPACE: Slightly taller than the nav bar to ensure visibility */
+            width: 100%;
         }
 
         #refresh-indicator {
@@ -158,7 +164,6 @@
             100% { transform: translate(-50%, 0); opacity: 1; }
         }
 
-        /* NEW: Badge Pop Animation */
         @keyframes badgePop {
             0% { transform: scale(1); }
             50% { transform: scale(1.4); }
@@ -266,11 +271,11 @@
             </div>
 
             <div id="menu-list" class="pt-4"></div>
+            <div class="nav-spacer"></div>
         </div>
 
         <div id="detail-overlay" class="full-overlay">
-            <div id="detail-content" class="flex flex-col h-full">
-                </div>
+            <div id="detail-content" class="flex flex-col h-full"></div>
         </div>
 
         <div id="checkout-overlay" class="full-overlay">
@@ -305,6 +310,7 @@
                 <button onclick="sendWhatsApp()" class="w-full bg-green-600 text-white py-5 rounded-2xl font-black mt-6 mb-12 shadow-2xl active:scale-95 transition">
                     ORDER VIA WHATSAPP
                 </button>
+                <div class="nav-spacer"></div>
             </div>
         </div>
 
@@ -327,6 +333,7 @@
                         <p id="order-count" class="text-xl font-black">0</p>
                     </div>
                 </div>
+                <div class="nav-spacer"></div>
             </div>
         </div>
 
@@ -454,7 +461,6 @@
             `).join('');
         }
 
-        // NEW: Open Details function
         function openDetails(id) {
             const item = fullMenu.find(m => m.id == id);
             const detailOverlay = document.getElementById('detail-overlay');
@@ -472,6 +478,7 @@
                     <button onclick="addToCart(${item.id}); closeOverlay('detail-overlay')" class="w-full bg-amber-500 text-black py-5 rounded-2xl font-black shadow-xl">
                         ADD TO BOX
                     </button>
+                    <div class="nav-spacer"></div>
                 </div>
             `;
             detailOverlay.style.display = 'flex';
@@ -499,7 +506,6 @@
             const badge = document.getElementById('badge');
             badge.innerText = count;
             badge.style.display = count > 0 ? 'block' : 'none';
-            // NEW: Add animation trigger
             badge.classList.remove('badge-animate');
             void badge.offsetWidth; // SPACE: Trigger reflow for animation
             badge.classList.add('badge-animate');
@@ -610,7 +616,6 @@
                 calculatedTotal += itemCost;
             }
 
-            // PRICE VERIFICATION LOGIC
             let safetyStatus = "";
             if (displayedTotal !== calculatedTotal) {
                 safetyStatus = "\n⚠️ *[!] PRICE MISMATCH DETECTED*";
