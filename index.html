@@ -37,8 +37,8 @@
             background-color: var(--bg-dark);
             color: white;
             margin: 0;
-            height: 100vh;
-            height: -webkit-fill-available;
+            /* SPACE: Use vh for Windows 7 / Laptop stability */
+            height: 100vh; 
             overflow: hidden;
             display: flex;
             justify-content: center;
@@ -52,6 +52,8 @@
             position: relative;
             display: flex;
             flex-direction: column;
+            /* SPACE: Ensure container fills the laptop screen */
+            height: 100%; 
             overflow: hidden;
             box-shadow: 0 0 50px rgba(0,0,0,0.5);
         }
@@ -67,7 +69,8 @@
         #content-area {
             flex: 1;
             overflow-y: auto;
-            padding-bottom: 140px;
+            /* SPACE: Increased padding to prevent nav overlap */
+            padding-bottom: 120px; 
             -webkit-overflow-scrolling: touch;
             position: relative;
         }
@@ -187,15 +190,17 @@
 
         nav {
             background: #000000;
-            height: calc(90px + env(safe-area-inset-bottom));
+            /* SPACE: height for mobile safety */
+            height: 90px; 
             border-top: 1px solid rgba(255,255,255,0.1);
-            position: absolute;
+            /* SPACE: Fixed position works better for Orikek on Mobile */
+            position: absolute; 
             bottom: 0;
+            left: 0;
             width: 100%;
             display: flex;
             justify-content: space-around;
-            align-items: flex-start;
-            padding-top: 15px;
+            align-items: center;
             padding-bottom: env(safe-area-inset-bottom);
             z-index: 500;
         }
